@@ -1,0 +1,3540 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KidDraw Studio - โปรแกรมฝึกวาดภาพตามรอยประ</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Mali & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Mali', 'Prompt', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            background-color: #fef9c3;
+        }
+        .font-cute {
+            font-family: 'Mali', cursive;
+        }
+        /* Canvas Checkerboard pattern */
+        .canvas-board-bg {
+            background-color: #ffffff;
+            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+            background-size: 22px 22px;
+        }
+        /* Windows Paint + Kid Friendly Tactile Buttons */
+        .kid-btn {
+            transition: all 0.15s ease;
+            border-bottom-width: 3px;
+        }
+        .kid-btn:active:not(:disabled) {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+        .tool-btn.active {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1d4ed8;
+            border-color: #2563eb;
+            box-shadow: inset 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+        .char-card.active {
+            border-color: #ec4899;
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            box-shadow: 0 4px 10px rgba(236, 72, 153, 0.25);
+            transform: translateY(-1px);
+        }
+        .pose-card.active {
+            border-color: #2563eb;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+            transform: translateY(-1px);
+        }
+        .step-pill.active {
+            background-color: #f97316;
+            color: white;
+            border-color: #c2410c;
+        }
+        canvas {
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col bg-amber-50 text-slate-800">
+
+    <!-- 1. TOP HEADER: แถบสถานะเกมฝึกซ้อมแข่งขันศิลปหัตถกรรม + จับเวลา + ส่งกรรมการตรวจ -->
+    <header class="bg-gradient-to-r from-indigo-700 via-blue-600 to-sky-500 px-2.5 py-1 flex items-center justify-between gap-1.5 shadow-xs z-20 shrink-0 border-b border-indigo-900">
+        <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 bg-white/95 px-2.5 py-0.5 rounded-xl border border-yellow-300">
+                <div class="w-5 h-5 rounded-lg bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-trophy text-xs"></i>
+                </div>
+                <h1 class="font-cute font-bold text-xs sm:text-sm text-indigo-950">KidDraw พิชิตเหรียญทอง</h1>
+            </div>
+
+            <!-- สลับโหมดเกม: ฝึกทีละท่า vs สนามแข่งจริง 4 ช่อง -->
+            <div class="flex items-center bg-indigo-950/50 p-0.5 rounded-xl border border-indigo-400/40">
+                <button onclick="switchGameMode('single')" id="mode-single-btn" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-amber-400 text-indigo-950">
+                    <i class="fa-solid fa-user"></i> ฝึกเดี่ยว 1 ท่า
+                </button>
+                <button onclick="switchGameMode('competition')" id="mode-comp-btn" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-white hover:bg-white/10">
+                    <i class="fa-solid fa-table-cells-large"></i> สนามแข่ง 4 ท่า
+                </button>
+            </div>
+
+            <!-- ป้ายหัวข้อโจทย์การแข่งขัน -->
+            <div class="hidden xl:flex items-center gap-1 bg-amber-100/95 px-2.5 py-0.5 rounded-xl border border-amber-300 text-[11px]">
+                <span class="font-bold text-amber-800"><i class="fa-solid fa-scroll"></i> โจทย์:</span>
+                <span id="mission-theme-title" class="font-bold text-indigo-950 truncate max-w-[180px]">กิจวัตรเด็กดี 4 อิริยาบถ</span>
+                <button onclick="randomizeCompetitionMission()" class="ml-1 text-indigo-600 hover:text-indigo-800 font-bold" title="สุ่มหัวข้อโจทย์แข่งขันใหม่">
+                    <i class="fa-solid fa-shuffle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- นาฬิกาจับเวลา + เปอร์เซ็นต์ลากเส้น + ปุ่มส่งกรรมการตรวจ 100 คะแนน -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <!-- นาฬิกาจับเวลาซ้อมแข่ง -->
+            <div class="flex items-center gap-1 bg-slate-900/90 text-white px-2 py-0.5 rounded-xl border border-amber-400 text-[11px]">
+                <i class="fa-solid fa-clock text-amber-400"></i>
+                <span id="timer-display" class="font-mono font-bold text-amber-300">00:00</span>
+                <button onclick="toggleTimer()" id="btn-timer-toggle" class="text-[10px] px-1 bg-emerald-600 hover:bg-emerald-500 rounded text-white" title="เริ่ม/หยุดเวลา">
+                    <i id="timer-icon" class="fa-solid fa-play"></i>
+                </button>
+                <button onclick="resetTimer()" class="text-[10px] px-1 bg-slate-700 hover:bg-slate-600 rounded text-slate-200" title="รีเซ็ตเวลา">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-1.5 bg-white/95 px-2 py-0.5 rounded-full border border-amber-300 text-xs">
+                <span class="font-bold text-amber-900 text-[10px] hidden md:inline">ความสำเร็จ:</span>
+                <div class="w-14 sm:w-20 h-2.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                    <div id="trace-progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-lime-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <span id="trace-progress-text" class="font-bold text-emerald-600 text-[11px] min-w-[28px] text-right">0%</span>
+            </div>
+
+            <button onclick="evaluateCompetitionScore()" class="kid-btn px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-500 hover:to-yellow-400 border-amber-600 text-indigo-950 font-bold text-[11px] flex items-center gap-1 shadow-xs">
+                <i class="fa-solid fa-medal text-rose-600"></i>
+                <span>ส่งกรรมการตรวจ (100 คะแนน)</span>
+            </button>
+            <button onclick="undoStroke()" id="btn-undo" title="ย้อนกลับ (Ctrl+Z)" class="kid-btn px-2 py-0.5 rounded-lg bg-amber-300 hover:bg-amber-400 border-amber-500 text-amber-950 font-bold disabled:opacity-40 text-[11px]">
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button onclick="redoStroke()" id="btn-redo" title="ทำซ้ำ (Ctrl+Y)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-slate-100 border-slate-300 text-slate-700 disabled:opacity-40 text-[11px]">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <button onclick="openClearModal()" title="ล้างกระดานวาดใหม่" class="kid-btn px-2 py-0.5 rounded-lg bg-rose-500 hover:bg-rose-600 border-rose-700 text-white font-bold text-[11px]">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <button onclick="downloadArtwork()" title="บันทึกรูปภาพผลงาน" class="kid-btn px-2 py-0.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 border-emerald-700 text-white font-bold text-[11px]">
+                <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. TOP RIBBON TOOLBAR: อุปกรณ์สไตล์ Windows Paint (เพิ่มรูปทรงเรขาคณิตสำหรับการแข่งจริง) -->
+    <section class="bg-slate-100 border-b border-slate-300 px-2 py-1 shadow-2xs z-10 shrink-0">
+        <div class="flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
+            
+            <!-- กลุ่มอุปกรณ์วาดภาพ + รูปทรงเรขาคณิต + ซูมจุดเดียว -->
+            <div class="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-xl border border-slate-300 flex-wrap">
+                <button onclick="selectTool('pen')" id="tool-pen" class="kid-btn tool-btn active flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="ดินสอตัดเส้น (กั้นถังเทสี)">
+                    <i class="fa-solid fa-pencil text-xs text-slate-800"></i>
+                    <span class="text-[11px] font-bold">ดินสอ</span>
+                </button>
+
+                <button onclick="selectTool('line')" id="tool-line" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="เส้นตรง (ลากเส้นตรงกั้นสีแบบ Paint)">
+                    <i class="fa-solid fa-slash text-xs text-indigo-700"></i>
+                    <span class="text-[11px] font-bold">เส้นตรง</span>
+                </button>
+
+                <button onclick="selectTool('circle')" id="tool-circle" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="วงกลม/วงรี (ช่วยวาดหัวและตาให้กลมเป๊ะ)">
+                    <i class="fa-regular fa-circle text-xs text-emerald-700"></i>
+                    <span class="text-[11px] font-bold">วงกลม</span>
+                </button>
+
+                <button onclick="selectTool('rect')" id="tool-rect" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="สี่เหลี่ยม (ช่วยวาดตัวและสิ่งของ)">
+                    <i class="fa-regular fa-square text-xs text-orange-600"></i>
+                    <span class="text-[11px] font-bold">สี่เหลี่ยม</span>
+                </button>
+
+                <button onclick="selectTool('fill')" id="tool-fill" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-amber-50" title="ถังเทสี (ถ้ารอยประขาดสีจะรั่ว!)">
+                    <i class="fa-solid fa-fill-drip text-xs text-amber-500"></i>
+                    <span class="text-[11px] font-bold">ถังเทสี</span>
+                </button>
+
+                <button onclick="selectTool('brush')" id="tool-brush" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="พู่กันระบายสี">
+                    <i class="fa-solid fa-paintbrush text-xs text-blue-600"></i>
+                    <span class="text-[11px] font-bold">พู่กัน</span>
+                </button>
+
+                <button onclick="selectTool('crayon')" id="tool-crayon" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-pink-50" title="สีเทียน">
+                    <i class="fa-solid fa-highlighter text-xs text-pink-500"></i>
+                    <span class="text-[11px] font-bold">สีเทียน</span>
+                </button>
+
+                <button onclick="selectTool('eraser')" id="tool-eraser" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-rose-50" title="ยางลบ">
+                    <i class="fa-solid fa-eraser text-xs text-rose-500"></i>
+                    <span class="text-[11px] font-bold">ยางลบ</span>
+                </button>
+
+                <button onclick="selectTool('pan')" id="tool-pan" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50" title="มือจับเลื่อนกระดานเมื่อซูม">
+                    <i class="fa-solid fa-hand text-xs text-indigo-600"></i>
+                    <span class="text-[11px] font-bold">เลื่อนดู</span>
+                </button>
+
+                <div class="h-5 w-px bg-slate-200 mx-0.5"></div>
+
+                <!-- จุดควบคุมการซูมเพียงจุดเดียว -->
+                <button onclick="changeZoom(-0.25)" class="kid-btn w-6 h-6 rounded-md bg-slate-100 hover:bg-indigo-100 border border-slate-300 text-slate-700 text-[10px] flex items-center justify-center" title="ซูมออก">
+                    <i class="fa-solid fa-magnifying-glass-minus"></i>
+                </button>
+                <button onclick="resetZoom()" id="zoom-level-label" class="px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 font-bold text-[10px] min-w-[42px] text-center" title="คลิกเพื่อรีเซ็ตขนาด 100%">
+                    100%
+                </button>
+                <button onclick="changeZoom(0.25)" class="kid-btn w-6 h-6 rounded-md bg-slate-100 hover:bg-indigo-100 border border-slate-300 text-slate-700 text-[10px] flex items-center justify-center" title="ซูมเข้า">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                </button>
+
+                <!-- ปุ่มซ่อน/แสดงเส้นประ เพื่อเช็กผลงานก่อนส่งกรรมการ -->
+                <button onclick="toggleGuideVisibility()" id="btn-toggle-guide" class="kid-btn px-2 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 font-bold text-[10px] flex items-center gap-1 ml-0.5" title="ซ่อน/แสดงเส้นประเพื่อเช็กเส้นจริงก่อนส่งกรรมการ">
+                    <i class="fa-solid fa-eye"></i>
+                    <span class="hidden lg:inline">เส้นประ</span>
+                </button>
+            </div>
+
+            <!-- ขนาดเส้น -->
+            <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl border border-slate-300">
+                <span class="text-[11px] font-bold text-slate-700">ขนาด:</span>
+                <input type="range" id="brush-size" min="2" max="36" value="6" oninput="updateBrushSize(this.value)" class="w-16 accent-blue-600 cursor-pointer">
+                <span id="brush-size-label" class="text-[10px] font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 text-blue-700 min-w-[34px] text-center">6 px</span>
+            </div>
+
+            <!-- ถาดสี (Colors) แถวเดียวกะทัดรัด -->
+            <div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-xl border border-slate-300">
+                <div id="active-color-box" class="w-6 h-6 rounded-md border-2 border-slate-700 shadow-inner shrink-0" style="background-color: #1e293b;" title="สีที่กำลังใช้"></div>
+                <div id="color-swatches" class="flex items-center gap-1 flex-wrap"></div>
+                <label class="flex items-center justify-center w-6 h-6 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer shrink-0" title="ผสมสีเพิ่มเติม">
+                    <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-500 via-lime-400 to-blue-500 border border-slate-400"></span>
+                    <input type="color" id="custom-color-picker" value="#1e293b" onchange="selectColor(this.value)" class="opacity-0 w-0 h-0">
+                </label>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. CENTER WORKSPACE: กระดานวาดภาพตรงกลาง ขยายพื้นที่ให้กว้างที่สุด -->
+    <div class="flex-1 flex overflow-hidden relative">
+        <main id="canvas-workspace" class="flex-1 flex items-center justify-center p-1 sm:p-2 overflow-hidden relative bg-gradient-to-br from-amber-100/60 via-sky-100/50 to-pink-100/60">
+            
+            <!-- กรอบกระดานวาดภาพ -->
+            <div id="board-container" class="relative canvas-board-bg rounded-2xl shadow-lg border-2 border-white ring-2 ring-amber-300 overflow-hidden flex items-center justify-center" style="width: 800px; height: 600px;">
+                
+                <!-- Viewport สำหรับซูมและเลื่อนกระดานวาดภาพทั้งหมดพร้อมกัน -->
+                <div id="zoom-viewport" class="relative w-full h-full origin-top-left" style="transform: translate(0px, 0px) scale(1);">
+                    <!-- Layer 1: เส้นแกนสัดส่วนและพื้นหลัง -->
+                    <canvas id="bg-canvas" width="800" height="600" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+                    
+                    <!-- Layer 2: ชั้นระบายสีและถังเทสี (อยู่ใต้เส้นที่เด็กวาด) -->
+                    <canvas id="color-canvas" width="800" height="600" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+                    <!-- Layer 3: เส้นประต้นแบบ (Dashed Guide) -->
+                    <canvas id="guide-canvas" width="800" height="600" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+                    <!-- Layer 4: ชั้นเส้นที่เด็กลากเอง (Main Line Layer) -->
+                    <canvas id="draw-canvas" width="800" height="600" class="absolute inset-0 w-full h-full cursor-crosshair"></canvas>
+
+                    <!-- Layer 5: ชั้นเอฟเฟกต์แจ้งเตือนเมื่อสีรั่ว & พรีวิวขณะลากรูปทรงเรขาคณิต -->
+                    <canvas id="fx-canvas" width="800" height="600" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+                </div>
+
+                <!-- กรอบภาพต้นแบบมุมขวาบน (คลิกที่รูปเพื่อเปิดหน้าต่างขยายดูแบบได้ทันที จุดเดียวไม่เกะกะ) -->
+                <div id="mini-ref-card" class="absolute top-2 right-2 bg-white/95 p-1.5 rounded-xl shadow-md border border-sky-300 w-28 sm:w-36 z-10">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[10px] font-bold text-sky-800 flex items-center gap-1 truncate">
+                            <i class="fa-solid fa-image text-sky-500"></i> ภาพต้นแบบ
+                        </span>
+                        <button onclick="toggleMiniRef()" class="text-slate-400 hover:text-slate-600 text-[10px] px-1" title="พับเก็บ/แสดง">
+                            <i id="mini-ref-icon" class="fa-solid fa-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div id="mini-ref-body">
+                        <div class="relative overflow-hidden rounded-lg bg-sky-50 border border-sky-200 group cursor-pointer" onclick="openRefZoomModal()" title="คลิกเพื่อขยายดูภาพต้นแบบ">
+                            <canvas id="mini-ref-canvas" width="320" height="240" class="w-full h-auto block"></canvas>
+                            <div class="absolute bottom-1 right-1 bg-slate-900/65 text-white text-[9px] px-1.5 py-0.5 rounded opacity-85 group-hover:opacity-100">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i> ขยาย
+                            </div>
+                        </div>
+                        <p id="mini-pose-title" class="text-[10px] font-bold text-center text-indigo-800 mt-0.5 truncate">เด็กชาย: 1. การเดิน</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- 4. BOTTOM DOCK: แถบเลือกตัวละคร ท่าทาง และปุ่มลัดซูมช่อง 4 อิริยาบถในโหมดแข่งขัน -->
+    <footer class="bg-gradient-to-r from-amber-100 via-pink-50 to-sky-100 border-t-2 border-amber-300 px-2.5 py-1 shadow-inner z-20 shrink-0">
+        <div class="flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
+            
+            <!-- ส่วนที่ 1: ตัวละคร ชาย/หญิง + ปุ่มสุ่มลุค + สุ่มโจทย์ -->
+            <div class="flex items-center gap-1">
+                <button onclick="selectCharacter('boy')" id="char-boy" class="kid-btn char-card active flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs font-bold">
+                    <span>👦</span>
+                    <span>เด็กชาย</span>
+                </button>
+
+                <button onclick="selectCharacter('girl')" id="char-girl" class="kid-btn char-card flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs font-bold">
+                    <span>👧</span>
+                    <span>เด็กหญิง</span>
+                </button>
+
+                <button onclick="randomizeCharacterStyle()" class="kid-btn px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 border-indigo-800 text-white font-bold text-xs flex items-center gap-1" title="สุ่มหน้าตา ทรงผม ลายเสื้อผ้า และสีสันใหม่">
+                    <i class="fa-solid fa-dice text-yellow-300"></i>
+                    <span>สุ่มคาแรคเตอร์</span>
+                </button>
+
+                <button onclick="randomizeCompetitionMission()" class="kid-btn px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-orange-700 text-white font-bold text-xs flex items-center gap-1" title="สุ่มโจทย์หัวข้อแข่งขันศิลปหัตถกรรม">
+                    <i class="fa-solid fa-trophy text-yellow-200"></i>
+                    <span>สุ่มโจทย์แข่ง</span>
+                </button>
+            </div>
+
+            <!-- ส่วนที่ 2: เลือกท่าทาง (โหมดฝึกเดี่ยว) หรือ ปุ่มซูมโฟกัสช่อง 1-4 (โหมดสนามแข่ง 4 ท่า) -->
+            <div id="single-pose-bar" class="flex items-center gap-1 overflow-x-auto max-w-full py-0.5">
+                <button onclick="selectPose('walk')" id="pose-walk" class="kid-btn pose-card active flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-person-walking text-emerald-600"></i>
+                    <span>1. เดิน</span>
+                </button>
+
+                <button onclick="selectPose('sit')" id="pose-sit" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-chair text-blue-600"></i>
+                    <span>2. นั่ง</span>
+                </button>
+
+                <button onclick="selectPose('sleep')" id="pose-sleep" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-bed text-indigo-600"></i>
+                    <span>3. นอน</span>
+                </button>
+
+                <button onclick="selectPose('cook')" id="pose-cook" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-utensils text-orange-600"></i>
+                    <span>4. ทำกับข้าว</span>
+                </button>
+
+                <button onclick="selectPose('sport')" id="pose-sport" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-futbol text-rose-600"></i>
+                    <span>5. เล่นกีฬา</span>
+                </button>
+
+                <button onclick="selectPose('plant')" id="pose-plant" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-seedling text-lime-600"></i>
+                    <span>6. รดน้ำต้นไม้</span>
+                </button>
+
+                <button onclick="selectPose('paint')" id="pose-paint" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-palette text-purple-600"></i>
+                    <span>7. วาดรูป</span>
+                </button>
+
+                <button onclick="selectPose('happy')" id="pose-happy" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-face-laugh-beam text-amber-500"></i>
+                    <span>8. กระโดดดีใจ</span>
+                </button>
+
+                <button onclick="selectPose('cry')" id="pose-cry" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-face-sad-tear text-sky-600"></i>
+                    <span>9. ร้องไห้</span>
+                </button>
+
+                <button onclick="selectPose('science')" id="pose-science" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
+                    <i class="fa-solid fa-magnifying-glass text-teal-600"></i>
+                    <span>10. สำรวจโลก</span>
+                </button>
+            </div>
+
+            <!-- แถบปุ่มลัดซูมช่องที่ 1-4 สำหรับโหมดสนามแข่ง 4 ช่อง -->
+            <div id="comp-quadrant-bar" class="hidden items-center gap-1 overflow-x-auto">
+                <span class="text-[11px] font-bold text-indigo-900 mr-1"><i class="fa-solid fa-magnifying-glass"></i> ซูมช่อง:</span>
+                <button onclick="focusQuadrant(0)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
+                    ช่อง 1 (บนซ้าย)
+                </button>
+                <button onclick="focusQuadrant(1)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
+                    ช่อง 2 (บนขวา)
+                </button>
+                <button onclick="focusQuadrant(2)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
+                    ช่อง 3 (ล่างซ้าย)
+                </button>
+                <button onclick="focusQuadrant(3)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
+                    ช่อง 4 (ล่างขวา)
+                </button>
+                <button onclick="resetZoom()" class="kid-btn px-2 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-700 border border-indigo-800 text-white text-xs font-bold">
+                    ดูครบ 4 ช่อง
+                </button>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Modal แจ้งคะแนนและถามยืนยันการล้างกระดาน -->
+    <div id="app-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-4 border-amber-300">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-3 border-2 border-amber-300">
+                <i class="fa-solid fa-star"></i>
+            </div>
+            <h3 id="modal-title" class="font-cute text-xl font-bold text-center text-indigo-950 mb-2">ผลการฝึกวาดภาพ</h3>
+            <p id="modal-message" class="text-sm text-slate-700 text-center mb-5 leading-relaxed font-medium"></p>
+            <div id="modal-actions" class="flex items-center justify-center gap-3"></div>
+        </div>
+    </div>
+
+    <!-- Modal ขยายภาพต้นแบบขนาดใหญ่พร้อมระบบซูมดูรายละเอียด (Reference Image Zoom Modal) -->
+    <div id="ref-zoom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center z-50 p-3 sm:p-6">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-4 sm:p-5 shadow-2xl border-4 border-sky-400 flex flex-col max-h-[92vh]">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-lg border border-sky-300">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </div>
+                    <div>
+                        <h3 id="ref-modal-title" class="font-cute text-base sm:text-lg font-bold text-indigo-950">ขยายภาพต้นแบบดูรายละเอียด</h3>
+                        <p class="text-[11px] text-slate-500">กดปุ่ม + / - เพื่อซูมดูเส้นและสีของภาพต้นแบบใกล้ๆ หรือลากเพื่อเลื่อนดู</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="changeRefModalZoom(-0.3)" class="kid-btn px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-sky-100 border-slate-300 text-slate-700 font-bold text-xs">
+                        <i class="fa-solid fa-minus"></i> ซูมออก
+                    </button>
+                    <span id="ref-modal-zoom-label" class="text-xs font-bold text-sky-800 bg-sky-50 px-2.5 py-1 rounded-xl border border-sky-200 min-w-[52px] text-center">100%</span>
+                    <button onclick="changeRefModalZoom(0.3)" class="kid-btn px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-sky-100 border-slate-300 text-slate-700 font-bold text-xs">
+                        <i class="fa-solid fa-plus"></i> ซูมเข้า
+                    </button>
+                    <button onclick="resetRefModalZoom()" class="kid-btn px-2.5 py-1 rounded-xl bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-900 font-bold text-xs">
+                        รีเซ็ต
+                    </button>
+                    <button onclick="closeRefZoomModal()" class="kid-btn px-3 py-1 rounded-xl bg-rose-500 hover:bg-rose-600 border-rose-700 text-white font-bold text-xs ml-1">
+                        <i class="fa-solid fa-xmark"></i> ปิด
+                    </button>
+                </div>
+            </div>
+
+            <!-- พื้นที่แสดงภาพต้นแบบความละเอียดสูง -->
+            <div id="ref-modal-viewport" class="relative flex-1 overflow-hidden bg-sky-50/70 rounded-2xl border-2 border-sky-200 my-3 flex items-center justify-center cursor-grab active:cursor-grabbing min-h-[280px] sm:min-h-[420px]">
+                <canvas id="large-ref-canvas" width="800" height="600" class="max-w-full max-h-[68vh] w-auto h-auto rounded-xl bg-white shadow-md transition-transform duration-75" style="transform: translate(0px, 0px) scale(1);"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-600 font-bold">
+                <span>💡 สังเกตสีเสื้อผ้า ทรงผม และเส้นขอบจากภาพต้นแบบ แล้วกลับไปวาดตามได้เลย!</span>
+                <button onclick="closeRefZoomModal()" class="kid-btn px-4 py-1.5 rounded-2xl bg-blue-600 hover:bg-blue-700 border-blue-800 text-white font-bold text-xs">
+                    กลับไปวาดต่อ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast แจ้งเตือน -->
+    <div id="toast" class="fixed bottom-16 right-5 bg-indigo-950 text-white px-4 py-2.5 rounded-2xl border-2 border-amber-400 shadow-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none translate-y-3 z-50">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toast-text">พร้อมวาดภาพแล้ว!</span>
+    </div>
+
+    <script>
+        /********************************************************************
+         * 1. ข้อมูลสถานะหลักของโปรแกรมและระบบเกมแข่งขันศิลปหัตถกรรม (STATE & CONFIG)
+         ********************************************************************/
+        const INTERNAL_WIDTH = 800;
+        const INTERNAL_HEIGHT = 600;
+
+        const state = {
+            gameMode: 'single',         // 'single' (ฝึกทีละท่า) | 'competition' (สนามแข่ง 4 อิริยาบถใน 1 หน้าจอ)
+            currentCharacter: 'boy',    // 'boy' | 'girl'
+            currentPose: 'walk',        // 'walk' | 'sit' | 'sleep' | 'cook' | 'sport'
+            competitionPoses: ['walk', 'sit', 'cook', 'sport'], // 4 ท่าในโหมดสนามแข่ง
+            missionIndex: 0,
+            currentStep: 'all',
+            tool: 'pen',                // 'pen' | 'line' | 'circle' | 'rect' | 'brush' | 'fill' | 'crayon' | 'eraser' | 'pan'
+            color: '#1e293b',
+            brushSize: 6,
+            strictFillMode: true,
+            guideVisible: true,
+            dashStyle: 'standard',
+            isDrawing: false,
+            lastPoint: null,
+            shapeStartPoint: null,      // จุดเริ่มต้นสำหรับเครื่องมือเส้นตรง/วงกลม/สี่เหลี่ยม
+            leakCount: 0,               // จำนวนครั้งที่เทสีรั่ว เพื่อนำมาคำนวณความประณีต
+            // นาฬิกาจับเวลาฝึกซ้อม
+            timerSeconds: 0,
+            timerRunning: false,
+            timerInterval: null,
+            // สถานะการซูมและเลื่อนกระดานวาดภาพ
+            zoom: 1,
+            panX: 0,
+            panY: 0,
+            isPanning: false,
+            panStart: { x: 0, y: 0 },
+            // สถานะการขยายภาพต้นแบบ
+            isRefCardLarge: false,
+            refModalZoom: 1,
+            refModalPanX: 0,
+            refModalPanY: 0,
+            isRefModalPanning: false,
+            refModalPanStart: { x: 0, y: 0 },
+            history: [],
+            redoStack: [],
+            maxHistory: 25
+        };
+
+        // คลังโจทย์จำลองการแข่งขันศิลปหัตถกรรมนักเรียน (4 อิริยาบถใน 1 หน้าจอ)
+        const COMPETITION_MISSIONS = [
+            {
+                title: 'กิจวัตรเด็กดี 4 อิริยาบถ',
+                poses: ['walk', 'sit', 'cook', 'sleep'],
+                desc: 'วาดตัวละครคนเดียวกันใน 4 กิจวัตร: เดินไปโรงเรียน, นั่งอ่านหนังสือ, ทำกับข้าวช่วยแม่ และนอนหลับพักผ่อน'
+            },
+            {
+                title: 'ฮีโร่พิทักษ์รักษ์โลก',
+                poses: ['plant', 'science', 'walk', 'happy'],
+                desc: 'วาดตัวละครรักษ์ธรรมชาติ: รดน้ำต้นไม้, ส่องแว่นขยายสำรวจธรรมชาติ, เดินเก็บขยะ และกระโดดดีใจเมื่อโลกสะอาด'
+            },
+            {
+                title: 'นักสำรวจจิ๋ว ตะลุยโลกกว้าง',
+                poses: ['science', 'sit', 'paint', 'happy'],
+                desc: 'วาดนักสำรวจตัวน้อย: ส่องแว่นขยายสำรวจแมลง, นั่งอ่านตำราค้นคว้า, วาดภาพบันทึกผล และกระโดดดีใจเมื่อค้นพบสิ่งใหม่'
+            },
+            {
+                title: '4 อารมณ์และกิจกรรมของหนู',
+                poses: ['happy', 'cry', 'sport', 'sleep'],
+                desc: 'ฝึกสื่ออารมณ์และท่าทางหลากหลาย: กระโดดดีใจสุดขีด, ร้องไห้เสียใจเมื่อไอศกรีมตก, เตะฟุตบอล และนอนหลับฝันดี'
+            },
+            {
+                title: 'วันหยุดแสนสุข สร้างสรรค์งานศิลป์',
+                poses: ['paint', 'cook', 'plant', 'sit'],
+                desc: 'วาดกิจกรรมวันหยุดสร้างสรรค์: วาดรูประบายสี, ทำอาหารจานโปรด, ปลูกต้นไม้ และนั่งอ่านนิทาน'
+            },
+            {
+                title: 'หนูน้อยสุขภาพดี ชีวีสดใส',
+                poses: ['walk', 'sport', 'cook', 'sleep'],
+                desc: 'วาดตัวละครรักสุขภาพ: เดินออกกำลังกาย, เตะฟุตบอล, ทำอาหารมีประโยชน์ และนอนหลับแต่หัวค่ำ'
+            }
+        ];
+
+        const POSE_INFO = {
+            walk: {
+                title: '1. การเดิน',
+                tip: 'ท่าเดิน: ลากเส้นประส่วนหัว ลำตัว และแขนขาที่แกว่งสลับกัน สังเกตนิ้วมือและรองเท้าให้ครบก่อนเทสีนะ!',
+                headCenter: { x: 400, y: 185 }
+            },
+            sit: {
+                title: '2. การนั่ง',
+                tip: 'ท่านั่ง: ขาสองข้างพับนั่งบนม้านั่ง นิ้วมือทั้งสองข้างประคองขอบสมุดนิทาน ลากเส้นให้ชนกันครบทุกมุมนะ!',
+                headCenter: { x: 400, y: 190 }
+            },
+            sleep: {
+                title: '3. การนอน',
+                tip: 'ท่านอน: ศีรษะหนุนหมอน มือแบวางข้างแก้มและพาดบนผ้าห่ม ลากเส้นนิ้วมือและนิ้วเท้าให้ครบเลย!',
+                headCenter: { x: 265, y: 310 }
+            },
+            cook: {
+                title: '4. ทำกับข้าว',
+                tip: 'ทำกับข้าว: สวมหมวกเชฟ นิ้วมือกำด้ามตะหลิวและด้ามกระทะทอดไข่ดาว ลากเส้นให้ปิดสนิทก่อนเทสีนะ!',
+                headCenter: { x: 400, y: 195 }
+            },
+            sport: {
+                title: '5. เล่นกีฬา',
+                tip: 'เล่นกีฬา: วิ่งเตะลูกฟุตบอลเต็มแรง แขนกางออกพร้อมกางนิ้วมือทรงตัว ลากเส้นให้ครบทุกนิ้วเลย!',
+                headCenter: { x: 370, y: 175 }
+            },
+            plant: {
+                title: '6. รดน้ำต้นไม้',
+                tip: 'รดน้ำต้นไม้: มือขวากำหูบัวรดน้ำรดต้นอ่อนในกระถาง มือซ้ายโบกทักทายต้นไม้ ฝึกวาดอุปกรณ์และธรรมชาติ!',
+                headCenter: { x: 375, y: 185 }
+            },
+            paint: {
+                title: '7. วาดรูป',
+                tip: 'วาดรูปศิลปะ: มือซ้ายถือจานสี มือขวาจับพู่กันระบายลงบนขาตั้งวาดภาพ เหมาะมากสำหรับโจทย์ความคิดสร้างสรรค์!',
+                headCenter: { x: 365, y: 185 }
+            },
+            happy: {
+                title: '8. กระโดดดีใจ',
+                tip: 'กระโดดดีใจ: ชูสองแขนทำนิ้วชูสองนิ้ว (V-Sign) ขาสองข้างพับเข่าลอยตัวกลางอากาศ พร้อมดวงดาวสดใส!',
+                headCenter: { x: 400, y: 165 }
+            },
+            cry: {
+                title: '9. ร้องไห้',
+                tip: 'ร้องไห้เสียใจ: ไอศกรีมตกพื้น มือซ้ายยกขึ้นเช็ดน้ำตา มือขวาแบออก ฝึกวาดการแสดงอารมณ์ให้ชัดเจน!',
+                headCenter: { x: 400, y: 185 }
+            },
+            science: {
+                title: '10. สำรวจโลก',
+                tip: 'นักสำรวจ: ก้าวขาถือแว่นขยายอันใหญ่ส่องดูเต่าทองบนใบไม้ เหมาะสำหรับโจทย์วิทยาศาสตร์และการเรียนรู้!',
+                headCenter: { x: 370, y: 185 }
+            }
+        };
+
+        // อ้างอิง Canvas ทั้งหมด
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        const colorCanvas = document.getElementById('color-canvas');
+        const colorCtx = colorCanvas.getContext('2d', { willReadFrequently: true });
+        const guideCanvas = document.getElementById('guide-canvas');
+        const guideCtx = guideCanvas.getContext('2d', { willReadFrequently: true });
+        const drawCanvas = document.getElementById('draw-canvas');
+        const drawCtx = drawCanvas.getContext('2d', { willReadFrequently: true });
+        const fxCanvas = document.getElementById('fx-canvas');
+        const fxCtx = fxCanvas.getContext('2d');
+        const miniRefCanvas = document.getElementById('mini-ref-canvas');
+        const miniRefCtx = miniRefCanvas.getContext('2d');
+        const largeRefCanvas = document.getElementById('large-ref-canvas');
+        const largeRefCtx = largeRefCanvas.getContext('2d');
+
+        // Canvas ลับสำหรับตรวจเปอร์เซ็นต์การลากเส้นทับรอยประ
+        const hitCanvas = document.createElement('canvas');
+        hitCanvas.width = INTERNAL_WIDTH;
+        hitCanvas.height = INTERNAL_HEIGHT;
+        const hitCtx = hitCanvas.getContext('2d', { willReadFrequently: true });
+
+        // ชุดสีมาตรฐานสไตล์ Windows Paint และโทนสีสำหรับสุ่มตัวละคร
+        const PALETTE_COLORS = [
+            { name: 'ดำตัดเส้น', hex: '#1e293b' },
+            { name: 'น้ำตาลเข้ม', hex: '#78350f' },
+            { name: 'แดงสด', hex: '#ef4444' },
+            { name: 'ส้มสดใส', hex: '#f97316' },
+            { name: 'เหลืองทอง', hex: '#facc15' },
+            { name: 'เขียวใบไม้', hex: '#22c55e' },
+            { name: 'ฟ้าสดใส', hex: '#0ea5e9' },
+            { name: 'น้ำเงินเข้ม', hex: '#2563eb' },
+            { name: 'ม่วงพาสเทล', hex: '#a855f7' },
+            { name: 'ชมพูหวาน', hex: '#ec4899' },
+            { name: 'สีเนื้อสว่าง', hex: '#fde68a' },
+            { name: 'สีเนื้ออมชมพู', hex: '#fed7aa' },
+            { name: 'สีผิวแทน', hex: '#d97706' },
+            { name: 'เทาอ่อน', hex: '#94a3b8' },
+            { name: 'ขาวสะอาด', hex: '#ffffff' }
+        ];
+
+        const SKIN_TONES = ['#fde68a', '#fed7aa', '#fcd34d', '#f59e0b'];
+        const HAIR_COLORS = ['#1e293b', '#451a03', '#78350f', '#9a3412', '#1e1b4b'];
+        const SHIRT_COLORS = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+        const BOTTOM_COLORS = ['#1e3a8a', '#334155', '#065f46', '#7c2d12', '#581c87', '#be185d'];
+        const SHOE_COLORS = ['#ef4444', '#2563eb', '#f97316', '#16a34a', '#9333ea'];
+
+        const HAIR_NAMES_BOY = ['ผมจุกตั้ง', 'ผมปัดเท่', 'ผมหยักศก', 'ผมหน้าม้า'];
+        const HAIR_NAMES_GIRL = ['มัดแกละคู่', 'ผมบ๊อบโบว์', 'หางม้ายาว', 'มวยซาลาเปาคู่'];
+        const OUTFIT_NAMES = ['เสื้อลายขวาง', 'ชุดเอี๊ยม', 'เสื้อคอวีสปอร์ต', 'เสื้อตราฮีโร่'];
+
+        const characterStyle = {
+            hairIndex: 0,
+            faceIndex: 0,
+            outfitIndex: 0,
+            hasGlasses: false,
+            skinColor: '#fed7aa',
+            hairColor: '#1e293b',
+            shirtColor: '#3b82f6',
+            bottomColor: '#1e3a8a',
+            shoeColor: '#ef4444'
+        };
+
+        /********************************************************************
+         * 2. ระบบสุ่มหน้าตา ทรงผม เสื้อผ้า และสีสัน (CHARACTER RANDOMIZER)
+         ********************************************************************/
+        function pickRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function randomizeCharacterStyle() {
+            characterStyle.hairIndex = (characterStyle.hairIndex + 1 + Math.floor(Math.random() * 3)) % 4;
+            characterStyle.faceIndex = Math.floor(Math.random() * 4);
+            characterStyle.outfitIndex = (characterStyle.outfitIndex + 1 + Math.floor(Math.random() * 3)) % 4;
+            characterStyle.hasGlasses = Math.random() < 0.35;
+            characterStyle.skinColor = pickRandom(SKIN_TONES);
+            characterStyle.hairColor = pickRandom(HAIR_COLORS);
+            characterStyle.shirtColor = pickRandom(SHIRT_COLORS);
+            characterStyle.bottomColor = pickRandom(BOTTOM_COLORS);
+            characterStyle.shoeColor = pickRandom(SHOE_COLORS);
+
+            updateStyleBadge();
+            renderAllTemplates();
+            showToast('สุ่มหน้าตา ทรงผม เสื้อผ้า และสีสันใหม่เรียบร้อย!');
+        }
+
+        function updateStyleBadge() {
+            const badge = document.getElementById('style-badge');
+            if (!badge) return;
+            const hairList = state.currentCharacter === 'boy' ? HAIR_NAMES_BOY : HAIR_NAMES_GIRL;
+            const hairText = hairList[characterStyle.hairIndex] || '';
+            const outfitText = OUTFIT_NAMES[characterStyle.outfitIndex] || '';
+            const glassesText = characterStyle.hasGlasses ? ' + แว่นตา' : '';
+            badge.textContent = `${hairText} • ${outfitText}${glassesText}`;
+        }
+
+        /********************************************************************
+         * 3. ฟังก์ชันวาดส่วนหัว ทรงผม อารมณ์ใบหน้า และมือสมจริง (HEAD & HAND ENGINE)
+         ********************************************************************/
+        function renderCharacterHead(ctx, charKey, cx, cy, tiltRad = 0, options = {}) {
+            const isColorMode = options.colorMode || false;
+            const eyeState = options.eyeState || 'normal';
+            const chefHat = options.chefHat || false;
+            const sweatband = options.sweatband || false;
+
+            const skinColor = characterStyle.skinColor;
+            const hairColor = characterStyle.hairColor;
+            const r = 64;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(tiltRad);
+
+            // 1. ทรงผมด้านหลัง (สำหรับเด็กหญิง: มัดแกละคู่ / ผมบ๊อบ / หางม้า / มวยซาลาเปาคู่)
+            if (charKey === 'girl') {
+                if (characterStyle.hairIndex === 0) {
+                    // มัดแกละสองข้างผูกโบว์
+                    [-1, 1].forEach(dir => {
+                        ctx.beginPath();
+                        ctx.moveTo(dir * (r - 6), -18);
+                        ctx.quadraticCurveTo(dir * (r + 36), -34, dir * (r + 38), 10);
+                        ctx.quadraticCurveTo(dir * (r + 22), 34, dir * (r - 4), 6);
+                        ctx.closePath();
+                        if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.arc(dir * (r + 4), -12, 8, 0, Math.PI * 2);
+                        if (isColorMode) { ctx.fillStyle = '#ec4899'; ctx.fill(); }
+                        ctx.stroke();
+                    });
+                } else if (characterStyle.hairIndex === 1) {
+                    // ผมบ๊อบสั้นประบ่าพองน่ารักด้านข้างซ้าย-ขวา
+                    [-1, 1].forEach(dir => {
+                        ctx.beginPath();
+                        ctx.moveTo(dir * (r - 10), -28);
+                        ctx.quadraticCurveTo(dir * (r + 22), -6, dir * (r + 18), 32);
+                        ctx.quadraticCurveTo(dir * (r + 2), 46, dir * (r - 18), 36);
+                        ctx.closePath();
+                        if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                        ctx.stroke();
+                    });
+                } else if (characterStyle.hairIndex === 2) {
+                    // หางม้ายาวด้านข้างพร้อมยางมัดผม
+                    ctx.beginPath();
+                    ctx.moveTo(r - 8, -24);
+                    ctx.quadraticCurveTo(r + 46, -28, r + 42, 28);
+                    ctx.quadraticCurveTo(r + 18, 42, r - 4, 8);
+                    ctx.closePath();
+                    if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(r - 2, -16, 7, 0, Math.PI * 2);
+                    if (isColorMode) { ctx.fillStyle = '#f43f5e'; ctx.fill(); }
+                    ctx.stroke();
+                } else if (characterStyle.hairIndex === 3) {
+                    // มวยซาลาเปาคู่ด้านบน (แยก beginPath เพื่อไม่ให้มีเส้นตรงลากเชื่อมกัน)
+                    [-1, 1].forEach(dir => {
+                        ctx.beginPath();
+                        ctx.arc(dir * 42, -r + 6, 20, 0, Math.PI * 2);
+                        if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                        ctx.stroke();
+                    });
+                }
+            }
+
+            // 2. หูซ้าย-ขวา
+            ctx.beginPath();
+            ctx.arc(-r + 2, 4, 13, Math.PI * 0.5, Math.PI * 1.5);
+            if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(r - 2, 4, 13, -Math.PI * 0.5, Math.PI * 0.5);
+            if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+            ctx.stroke();
+
+            // 3. โครงใบหน้ากลม
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+            ctx.stroke();
+
+            // 4. ทรงผมด้านหน้า (เป็นรูปทรงปิดสนิททุกทรง เพื่อให้ลากเส้นและเทสีได้ไม่รั่ว)
+            if (charKey === 'boy') {
+                if (characterStyle.hairIndex === 0) {
+                    // ทรงผมจุกตั้งแสนซน (มีแนวผมหน้าม้าและจุกตั้งด้านบนเชื่อมต่อเป็นชิ้นเดียวกัน)
+                    ctx.beginPath();
+                    ctx.moveTo(-61, -18);
+                    ctx.quadraticCurveTo(-56, -52, -18, -62);
+                    ctx.quadraticCurveTo(-24, -90, -4, -76);
+                    ctx.quadraticCurveTo(8, -94, 18, -72);
+                    ctx.quadraticCurveTo(30, -82, 22, -60);
+                    ctx.quadraticCurveTo(56, -50, 61, -18);
+                    ctx.quadraticCurveTo(30, -26, 8, -20);
+                    ctx.lineTo(0, -28);
+                    ctx.lineTo(-8, -20);
+                    ctx.quadraticCurveTo(-30, -26, -61, -18);
+                    ctx.closePath();
+                    if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                    ctx.stroke();
+                } else if (characterStyle.hairIndex === 1) {
+                    // ทรงผมปัดข้างสุดเท่
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r, Math.PI * 1.08, Math.PI * 1.92);
+                    ctx.quadraticCurveTo(34, -14, 8, -24);
+                    ctx.lineTo(12, -15);
+                    ctx.quadraticCurveTo(-24, -18, -61, -16);
+                    ctx.closePath();
+                    if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                    ctx.stroke();
+                } else if (characterStyle.hairIndex === 2) {
+                    // ทรงผมหยักศกปุยเมฆ (เส้นโค้งต่อเนื่องรอบศีรษะ ไม่มีเส้นตัดกลาง)
+                    ctx.beginPath();
+                    ctx.moveTo(-60, -16);
+                    ctx.bezierCurveTo(-70, -42, -50, -64, -28, -58);
+                    ctx.bezierCurveTo(-20, -78, 20, -78, 28, -58);
+                    ctx.bezierCurveTo(50, -64, 70, -42, 60, -16);
+                    ctx.quadraticCurveTo(38, -10, 20, -20);
+                    ctx.quadraticCurveTo(0, -10, -20, -20);
+                    ctx.quadraticCurveTo(-38, -10, -60, -16);
+                    ctx.closePath();
+                    if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                    ctx.stroke();
+                } else {
+                    // ทรงผมหน้าม้าเรียบร้อยพร้อมรอยหยักหน้าม้า
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r, Math.PI * 1.07, Math.PI * 1.93);
+                    ctx.lineTo(22, -18);
+                    ctx.lineTo(14, -25);
+                    ctx.lineTo(6, -18);
+                    ctx.lineTo(-16, -18);
+                    ctx.lineTo(-22, -25);
+                    ctx.lineTo(-28, -18);
+                    ctx.closePath();
+                    if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                    ctx.stroke();
+                }
+            } else {
+                // ผมหน้าม้าเด็กหญิง (เส้นโค้งแสกกลางรับกับกรอบหน้าและปิดสนิท)
+                ctx.beginPath();
+                ctx.arc(0, 0, r, Math.PI * 1.06, Math.PI * 1.94);
+                ctx.quadraticCurveTo(36, -14, 6, -26);
+                ctx.quadraticCurveTo(0, -30, -6, -26);
+                ctx.quadraticCurveTo(-36, -14, -62, -12);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = hairColor; ctx.fill(); }
+                ctx.stroke();
+
+                // โบว์ติดผมสำหรับทรงผมบ๊อบ (hairIndex === 1)
+                if (characterStyle.hairIndex === 1) {
+                    ctx.beginPath();
+                    ctx.arc(38, -42, 7, 0, Math.PI * 2);
+                    if (isColorMode) { ctx.fillStyle = '#fb7185'; ctx.fill(); }
+                    ctx.stroke();
+                }
+            }
+
+            // หมวกเชฟ (ท่าทำกับข้าว) หรือ ผ้าคาดหัว (ท่าเล่นกีฬา)
+            if (chefHat) {
+                ctx.beginPath();
+                ctx.moveTo(-40, -r - 14);
+                ctx.bezierCurveTo(-56, -r - 36, -34, -r - 58, -14, -r - 48);
+                ctx.bezierCurveTo(-6, -r - 68, 24, -r - 68, 32, -r - 48);
+                ctx.bezierCurveTo(54, -r - 56, 66, -r - 34, 48, -r - 14);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.roundRect(-42, -r - 18, 84, 18, 5);
+                if (isColorMode) { ctx.fillStyle = '#f8fafc'; ctx.fill(); }
+                ctx.stroke();
+            } else if (sweatband) {
+                ctx.beginPath();
+                ctx.roundRect(-r + 4, -36, (r - 4) * 2, 14, 6);
+                if (isColorMode) { ctx.fillStyle = '#ef4444'; ctx.fill(); }
+                ctx.stroke();
+            }
+
+            // 5. คิ้ว (ปรับตามอารมณ์ได้)
+            ctx.beginPath();
+            if (eyeState === 'cry') {
+                // คิ้วลู่ลงแสดงความเสียใจ
+                ctx.moveTo(-34, -8); ctx.quadraticCurveTo(-24, -15, -14, -16);
+                ctx.moveTo(14, -16); ctx.quadraticCurveTo(24, -15, 34, -8);
+            } else {
+                ctx.moveTo(-34, -12); ctx.quadraticCurveTo(-24, -19, -14, -12);
+                ctx.moveTo(14, -12); ctx.quadraticCurveTo(24, -19, 34, -12);
+            }
+            ctx.stroke();
+
+            // 6. ดวงตา (แยก beginPath ซ้าย-ขวา เพื่อไม่ให้มีเส้นแนวนอนเชื่อมระหว่างดวงตาและหยดน้ำตา)
+            if (eyeState === 'sleep') {
+                ctx.beginPath();
+                ctx.arc(-24, 4, 8, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(24, 4, 8, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+            } else if (eyeState === 'happy' || characterStyle.faceIndex === 1) {
+                // ตายิ้มโค้งอารมณ์ดี
+                ctx.beginPath();
+                ctx.arc(-24, 6, 8, 1.15 * Math.PI, 1.85 * Math.PI);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(24, 6, 8, 1.15 * Math.PI, 1.85 * Math.PI);
+                ctx.stroke();
+            } else if (eyeState === 'cry') {
+                // ตาโค้งหลับปี๋พร้อมหยดน้ำตาก้อนกลมสองข้าง
+                ctx.beginPath();
+                ctx.arc(-24, 5, 8, 1.15 * Math.PI, 1.85 * Math.PI);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(24, 5, 8, 1.15 * Math.PI, 1.85 * Math.PI);
+                ctx.stroke();
+
+                // หยดน้ำตาไหลอาบแก้ม (แยกซ้าย-ขวา ไม่มีเส้นเชื่อมกัน)
+                ctx.beginPath();
+                ctx.ellipse(-34, 16, 5, 9, -0.3, 0, Math.PI * 2);
+                if (isColorMode) { ctx.fillStyle = '#38bdf8'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(34, 16, 5, 9, 0.3, 0, Math.PI * 2);
+                if (isColorMode) { ctx.fillStyle = '#38bdf8'; ctx.fill(); }
+                ctx.stroke();
+            } else {
+                // ตากลมโตสดใส (แยกซ้าย-ขวา)
+                ctx.beginPath();
+                ctx.arc(-24, 4, 8, 0, Math.PI * 2);
+                if (isColorMode) { ctx.fillStyle = '#1e293b'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(24, 4, 8, 0, Math.PI * 2);
+                if (isColorMode) { ctx.fillStyle = '#1e293b'; ctx.fill(); }
+                ctx.stroke();
+
+                if (charKey === 'girl') {
+                    ctx.beginPath();
+                    ctx.moveTo(-31, -1); ctx.lineTo(-37, -6);
+                    ctx.moveTo(31, -1); ctx.lineTo(37, -6);
+                    ctx.stroke();
+                }
+            }
+
+            // แว่นตา (ถ้าสุ่มได้สวมแว่น)
+            if (characterStyle.hasGlasses) {
+                ctx.beginPath();
+                ctx.arc(-24, 4, 15, 0, Math.PI * 2);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(-9, 4); ctx.lineTo(9, 4);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(24, 4, 15, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // 7. จมูกและแก้มชมพู (แยก beginPath ของแก้มซ้ายและแก้มขวา เพื่อเอาเส้นแนวนอนที่ลากผ่ากลางใบหน้าออก)
+            ctx.beginPath();
+            ctx.arc(0, 14, 2.8, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.ellipse(-40, 20, 9, 6, 0, 0, Math.PI * 2);
+            if (isColorMode) { ctx.fillStyle = '#ff9ebb'; ctx.fill(); }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.ellipse(40, 20, 9, 6, 0, 0, Math.PI * 2);
+            if (isColorMode) { ctx.fillStyle = '#ff9ebb'; ctx.fill(); }
+            ctx.stroke();
+
+            // 8. ปาก (ปรับเส้นรอยยิ้มให้โค้งธรรมชาติ ไม่มีเส้นตรงแนวนอนขวางเหนือปาก)
+            ctx.beginPath();
+            if (eyeState === 'sleep') {
+                ctx.arc(0, 28, 6, 0, Math.PI * 2);
+                ctx.stroke();
+            } else if (eyeState === 'cry') {
+                // ปากคว่ำร้องไห้
+                ctx.arc(0, 36, 12, 1.15 * Math.PI, 1.85 * Math.PI);
+                ctx.stroke();
+            } else if (eyeState === 'happy' || characterStyle.faceIndex === 2) {
+                // ยิ้มกว้างหัวเราะสดใส (ขอบบนโค้งมนรับกับแก้ม)
+                ctx.moveTo(-15, 22);
+                ctx.quadraticCurveTo(0, 25, 15, 22);
+                ctx.quadraticCurveTo(12, 38, 0, 38);
+                ctx.quadraticCurveTo(-12, 38, -15, 22);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = '#ef4444'; ctx.fill(); }
+                ctx.stroke();
+            } else {
+                // รอยยิ้มโค้งสดใส
+                ctx.arc(0, 20, 13, 0.15 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // ฟังก์ชันวาดมือและนิ้วมือทั้ง 5 ให้สมจริงตามท่าทางต่างๆ
+        function renderRealisticHand(ctx, x, y, angleRad = 0, scaleX = 1, scaleY = 1, handStyle = 'open', skinColor = '#fed7aa', isColorMode = false) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angleRad);
+            ctx.scale(scaleX, scaleY);
+
+            if (handStyle === 'open') {
+                // มือแบกาง 5 นิ้วสมจริง (เห็นฝ่ามือ นิ้วโป้ง และนิ้วทั้ง 4 เรียงตามความยาวจริง)
+                ctx.beginPath();
+                ctx.moveTo(-7, 10);
+                ctx.quadraticCurveTo(-11, 4, -10, -2);
+                ctx.quadraticCurveTo(-18, -3, -19, -8); // นิ้วโป้งกางออก
+                ctx.quadraticCurveTo(-17, -12, -9, -7);
+                ctx.lineTo(-9, -18); // นิ้วชี้
+                ctx.quadraticCurveTo(-7, -21, -5, -18);
+                ctx.lineTo(-4, -9);
+                ctx.lineTo(-3, -21); // นิ้วกลาง
+                ctx.quadraticCurveTo(0, -24, 2, -21);
+                ctx.lineTo(2, -9);
+                ctx.lineTo(4, -19);  // นิ้วนาง
+                ctx.quadraticCurveTo(6, -21, 8, -18);
+                ctx.lineTo(7, -8);
+                ctx.lineTo(9, -14);  // นิ้วก้อย
+                ctx.quadraticCurveTo(12, -16, 13, -12);
+                ctx.lineTo(10, 0);
+                ctx.quadraticCurveTo(11, 7, 7, 10);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // เส้นโค้งกลางฝ่ามือ
+                ctx.beginPath();
+                ctx.arc(0, 2, 5, 0.2 * Math.PI, 0.85 * Math.PI);
+                ctx.stroke();
+            } else if (handStyle === 'swing') {
+                // มือแกว่งข้างลำตัวตามธรรมชาติ (เห็นนิ้วโป้งด้านหน้าและนิ้วชี้-ก้อยโค้งเรียงกัน)
+                ctx.beginPath();
+                ctx.moveTo(-8, -7);
+                ctx.quadraticCurveTo(2, -10, 10, -5);
+                ctx.quadraticCurveTo(16, -1, 13, 3); // นิ้วโป้งด้านบน
+                ctx.quadraticCurveTo(8, 3, 5, 0);
+                ctx.quadraticCurveTo(15, 4, 13, 8);  // นิ้วชี้โค้งมน
+                ctx.quadraticCurveTo(11, 12, 4, 9);
+                ctx.quadraticCurveTo(9, 13, 3, 14);  // นิ้วกลางและนางโค้งรับกัน
+                ctx.quadraticCurveTo(-5, 13, -8, 7);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+            } else if (handStyle === 'grip') {
+                // มือกำด้ามอุปกรณ์ (เห็นข้อนิ้วทั้ง 4 เรียงกันและนิ้วโป้งล็อกด้าม)
+                ctx.beginPath();
+                ctx.roundRect(-10, -9, 20, 18, 6);
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // รอยแบ่งข้อนิ้วที่กำอยู่
+                ctx.beginPath();
+                ctx.moveTo(-4, -8); ctx.lineTo(-4, 7);
+                ctx.moveTo(1, -8);  ctx.lineTo(1, 7);
+                ctx.moveTo(6, -8);  ctx.lineTo(6, 7);
+                ctx.stroke();
+
+                // นิ้วโป้งพาดล็อกด้านบน
+                ctx.beginPath();
+                ctx.ellipse(-2, -6, 7, 4, 0.2, 0, Math.PI * 2);
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+            } else if (handStyle === 'hold_edge') {
+                // มือประคองขอบสมุด/หนังสือ (เห็นนิ้วทั้ง 4 โอบขอบกระดาษเรียงกัน)
+                ctx.beginPath();
+                ctx.roundRect(-8, -11, 15, 22, 6);
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(-6, -5); ctx.lineTo(5, -5);
+                ctx.moveTo(-6, 0);  ctx.lineTo(5, 0);
+                ctx.moveTo(-6, 5);  ctx.lineTo(5, 5);
+                ctx.stroke();
+            } else if (handStyle === 'peace') {
+                // มือชู 2 นิ้ว (V-Sign แสดงความดีใจ/สำเร็จ)
+                ctx.beginPath();
+                ctx.moveTo(-7, 10);
+                ctx.lineTo(-8, 0);
+                ctx.lineTo(-11, -18); // นิ้วชี้ชูขึ้น
+                ctx.quadraticCurveTo(-8, -22, -4, -18);
+                ctx.lineTo(-1, -4);
+                ctx.lineTo(3, -19);   // นิ้วกลางชูขึ้นเป็นตัว V
+                ctx.quadraticCurveTo(7, -22, 9, -17);
+                ctx.lineTo(6, -2);
+                ctx.quadraticCurveTo(12, 0, 10, 7); // นิ้วนางและก้อยพับลง
+                ctx.quadraticCurveTo(8, 11, -7, 10);
+                ctx.closePath();
+                if (isColorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // นิ้วโป้งพับแตะกลางฝ่ามือ
+                ctx.beginPath();
+                ctx.arc(0, 3, 5, 0, Math.PI * 1.2);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // วาดลวดลายเสื้อผ้าตามการสุ่ม (4 สไตล์)
+        function renderTorsoDetails(ctx, x, y, w, h) {
+            ctx.beginPath();
+            if (characterStyle.outfitIndex === 0) {
+                // เสื้อลายขวาง
+                ctx.moveTo(x + 4, y + h * 0.35); ctx.lineTo(x + w - 4, y + h * 0.35);
+                ctx.moveTo(x + 2, y + h * 0.68); ctx.lineTo(x + w - 2, y + h * 0.68);
+            } else if (characterStyle.outfitIndex === 1) {
+                // ชุดเอี๊ยมมีสายและกระเป๋าหน้า
+                ctx.moveTo(x + w * 0.25, y); ctx.lineTo(x + w * 0.25, y + h * 0.42);
+                ctx.moveTo(x + w * 0.75, y); ctx.lineTo(x + w * 0.75, y + h * 0.42);
+                ctx.rect(x + w * 0.22, y + h * 0.42, w * 0.56, h * 0.42);
+            } else if (characterStyle.outfitIndex === 2) {
+                // เสื้อคอวีสปอร์ต
+                ctx.moveTo(x + w * 0.28, y);
+                ctx.lineTo(x + w * 0.5, y + h * 0.32);
+                ctx.lineTo(x + w * 0.72, y);
+            } else {
+                // เสื้อตราฮีโร่วงกลมกลางอก
+                ctx.arc(x + w * 0.5, y + h * 0.48, Math.min(w, h) * 0.2, 0, Math.PI * 2);
+            }
+            ctx.stroke();
+        }
+
+        // วาดตัวละครตามท่าทางทั้ง 10 อิริยาบถ
+        function drawCharacterPose(ctx, poseKey, config = {}) {
+            const {
+                charKey = state.currentCharacter,
+                colorMode = false,
+                activeStep = 'all',
+                dashArray = [8, 7],
+                baseStrokeColor = 'rgba(37, 99, 235, 0.78)',
+                highlightStrokeColor = 'rgba(234, 88, 12, 0.95)',
+                fadedStrokeColor = 'rgba(148, 163, 184, 0.35)',
+                lineWidth = 3.2
+            } = config;
+
+            const isGirl = (charKey === 'girl');
+            const skinColor = characterStyle.skinColor;
+            const shirtColor = characterStyle.shirtColor;
+            const bottomColor = characterStyle.bottomColor;
+            const shoeColor = characterStyle.shoeColor;
+
+            ctx.save();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            function setGroupStyle(groupName) {
+                if (colorMode) {
+                    ctx.setLineDash([]);
+                    ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 3;
+                    return;
+                }
+                ctx.setLineDash(dashArray);
+                if (activeStep === 'all') {
+                    ctx.strokeStyle = baseStrokeColor;
+                    ctx.lineWidth = lineWidth;
+                } else if (activeStep === groupName) {
+                    ctx.strokeStyle = highlightStrokeColor;
+                    ctx.lineWidth = lineWidth + 1.2;
+                } else {
+                    ctx.strokeStyle = fadedStrokeColor;
+                    ctx.lineWidth = Math.max(1.5, lineWidth - 1);
+                }
+            }
+
+            // 1. ท่าเดิน (WALK)
+            if (poseKey === 'walk') {
+                setGroupStyle('props');
+                // กระเป๋าสะพายหลัง (อยู่ฝั่งซ้ายตามทิศทางการเดินไปด้านขวา)
+                ctx.beginPath();
+                ctx.roundRect(316, 262, 42, 95, 16);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(170, 140, 34, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนหลัง (แขนซ้ายแกว่งไปด้านหลัง มีแขนเสื้อ ข้อศอก ข้อมือ และมือสมจริง)
+                ctx.beginPath();
+                ctx.moveTo(354, 256);
+                ctx.lineTo(330, 270);
+                ctx.lineTo(342, 292);
+                ctx.lineTo(360, 280);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(330, 270);
+                ctx.quadraticCurveTo(308, 282, 286, 296); // ต้นแขนถึงข้อศอกและท่อนแขนล่าง
+                ctx.lineTo(296, 314);
+                ctx.quadraticCurveTo(322, 304, 342, 292);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือซ้ายแกว่งไปด้านหลัง (เห็นนิ้วโป้งและนิ้วทั้งสี่เรียงสมจริง)
+                renderRealisticHand(ctx, 286, 308, 2.5, 1, 1, 'swing', skinColor, colorMode);
+
+                // แขนหน้า (แขนขวาแกว่งไปด้านหน้า งอข้อศอกขึ้นเล็กน้อยตามจังหวะก้าวเดิน)
+                ctx.beginPath();
+                ctx.moveTo(446, 256);
+                ctx.lineTo(472, 268);
+                ctx.lineTo(458, 292);
+                ctx.lineTo(442, 280);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(472, 268);
+                ctx.quadraticCurveTo(486, 278, 508, 272); // ช่วงพับศอกและท่อนแขนหน้า
+                ctx.lineTo(514, 290);
+                ctx.quadraticCurveTo(484, 302, 458, 292); // ท้องแขนและข้อศอกด้านล่าง
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือขวาแกว่งไปด้านหน้าพร้อมนิ้วมือสมจริง
+                renderRealisticHand(ctx, 516, 280, -0.25, 1, 1, 'swing', skinColor, colorMode);
+
+                // ขาหลัง (ขาซ้ายงอเข่าส่งตัวไปด้านหน้า พร้อมน่องและข้อเท้าที่สมจริง)
+                ctx.beginPath();
+                ctx.moveTo(350, 408);
+                ctx.lineTo(388, 408);
+                ctx.quadraticCurveTo(390, 434, 380, 452); // ช่วงหน้าขาและหัวเข่า
+                ctx.quadraticCurveTo(368, 470, 350, 486); // ช่วงหน้าแข้งเอียงไปด้านหลัง
+                ctx.lineTo(324, 474);
+                ctx.quadraticCurveTo(328, 454, 344, 442); // ส่วนโค้งของน่องขาหลัง
+                ctx.quadraticCurveTo(348, 426, 350, 408);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // รอยโค้งหัวเข่าขาหลัง
+                ctx.beginPath();
+                ctx.moveTo(368, 448);
+                ctx.quadraticCurveTo(376, 450, 378, 455);
+                ctx.stroke();
+
+                // ถุงเท้าขาหลัง
+                ctx.beginPath();
+                ctx.moveTo(324, 474);
+                ctx.lineTo(350, 486);
+                ctx.lineTo(342, 502);
+                ctx.lineTo(315, 488);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+
+                // รองเท้าผ้าใบขาหลัง (ส้นยกขึ้นจังหวะก้าวเดิน)
+                ctx.beginPath();
+                ctx.moveTo(315, 488);
+                ctx.lineTo(342, 502);
+                ctx.quadraticCurveTo(370, 508, 374, 518);
+                ctx.quadraticCurveTo(374, 526, 356, 525);
+                ctx.lineTo(304, 504);
+                ctx.quadraticCurveTo(302, 492, 315, 488);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                ctx.stroke();
+
+                // ขาหน้า (ขาขวาก้าวนำไปด้านหน้า มีต้นขา หัวเข่า และน่องชัดเจน)
+                ctx.beginPath();
+                ctx.moveTo(406, 408);
+                ctx.lineTo(444, 408);
+                ctx.quadraticCurveTo(458, 430, 460, 450); // ต้นขาและหัวเข่าด้านหน้า
+                ctx.quadraticCurveTo(460, 470, 462, 490); // หน้าแข้งก้าวลงพื้น
+                ctx.lineTo(432, 492);
+                ctx.quadraticCurveTo(422, 470, 424, 452); // ส่วนโค้งน่องด้านหลัง
+                ctx.quadraticCurveTo(414, 432, 406, 408);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // รอยโค้งหัวเข่าขาหน้า
+                ctx.beginPath();
+                ctx.moveTo(446, 447);
+                ctx.quadraticCurveTo(455, 449, 457, 454);
+                ctx.stroke();
+
+                // ถุงเท้าขาหน้า
+                ctx.beginPath();
+                ctx.moveTo(432, 492);
+                ctx.lineTo(462, 490);
+                ctx.lineTo(464, 506);
+                ctx.lineTo(432, 508);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+
+                // รองเท้าผ้าใบขาหน้า (ทรงรองเท้าผ้าใบหันไปด้านหน้าเหยียบพื้น)
+                ctx.beginPath();
+                ctx.moveTo(432, 508);
+                ctx.lineTo(464, 506);
+                ctx.quadraticCurveTo(494, 506, 498, 518);
+                ctx.quadraticCurveTo(498, 526, 484, 526);
+                ctx.lineTo(428, 526);
+                ctx.quadraticCurveTo(424, 516, 432, 508);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(352, 252); ctx.lineTo(448, 252); ctx.lineTo(456, 360); ctx.lineTo(344, 360); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 348, 252, 104, 108);
+
+                ctx.beginPath();
+                if (isGirl) {
+                    ctx.moveTo(344, 360); ctx.lineTo(456, 360); ctx.lineTo(476, 412); ctx.lineTo(324, 412); ctx.closePath();
+                } else {
+                    ctx.moveTo(344, 360); ctx.lineTo(456, 360); ctx.lineTo(454, 410); ctx.lineTo(404, 410); ctx.lineTo(398, 392); ctx.lineTo(392, 410); ctx.lineTo(346, 410); ctx.closePath();
+                }
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 400, 185, 0, { colorMode });
+            }
+
+            // 2. ท่านั่ง (SIT)
+            else if (poseKey === 'sit') {
+                setGroupStyle('props');
+                ctx.beginPath();
+                ctx.roundRect(285, 425, 230, 35, 14);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(305, 460, 24, 55, 6);
+                ctx.roundRect(471, 460, 24, 55, 6);
+                if (colorMode) { ctx.fillStyle = '#a16207'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(350, 260); ctx.lineTo(450, 260); ctx.lineTo(458, 375); ctx.lineTo(342, 375); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 346, 260, 108, 115);
+
+                ctx.beginPath();
+                ctx.roundRect(334, 375, 132, 52, 18);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // ขาทั้งสองข้างพับเข่านั่งลงมา มีหัวเข่า น่องเรียวลงหาข้อเท้า ถุงเท้า และรองเท้าผ้าใบ
+                [-1, 1].forEach(dir => {
+                    const cx = 400 + dir * 43;
+                    // หัวเข่าและหน้าแข้ง/น่อง
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 17, 414);
+                    ctx.quadraticCurveTo(cx, 404, cx + 17, 414); // โค้งหัวเข่าด้านบน
+                    ctx.quadraticCurveTo(cx + 21, 444, cx + 14, 476); // น่องด้านนอกเรียวลงหาข้อเท้า
+                    ctx.lineTo(cx - 14, 476);
+                    ctx.quadraticCurveTo(cx - 21, 444, cx - 17, 414); // น่องด้านใน
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // รอยโค้งลูกสะบ้าหัวเข่า
+                    ctx.beginPath();
+                    ctx.arc(cx, 424, 7, 0.15 * Math.PI, 0.85 * Math.PI);
+                    ctx.stroke();
+
+                    // ถุงเท้าสีขาว
+                    ctx.beginPath();
+                    ctx.roundRect(cx - 15, 476, 30, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    // รองเท้าผ้าใบวางบนพื้น (ปลายเท้าชี้ออกด้านข้างเล็กน้อยอย่างเป็นธรรมชาติ)
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 16, 492);
+                    ctx.lineTo(cx + 16, 492);
+                    ctx.quadraticCurveTo(cx + dir * 32, 495, cx + dir * 30, 510);
+                    ctx.quadraticCurveTo(cx + dir * 26, 516, cx - dir * 18, 516);
+                    ctx.quadraticCurveTo(cx - dir * 20, 502, cx - 16, 492);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                // แขนสองข้างงอศอกประคองหนังสือ (มีแขนเสื้อ ต้นแขน ข้อศอก และท่อนแขนเชื่อมกับมือชัดเจน)
+                [-1, 1].forEach(dir => {
+                    const sx = 400 + dir * 50;
+                    // แขนเสื้อ
+                    ctx.beginPath();
+                    ctx.moveTo(sx, 264);
+                    ctx.lineTo(sx + dir * 28, 282);
+                    ctx.lineTo(sx + dir * 14, 306);
+                    ctx.lineTo(sx - dir * 4, 290);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // ต้นแขน ข้อศอก และท่อนแขนพับเข้าหาขอบหนังสือโดยไม่ถูกหนังสือบัง
+                    ctx.beginPath();
+                    ctx.moveTo(sx + dir * 28, 282);
+                    ctx.quadraticCurveTo(sx + dir * 52, 316, sx + dir * 42, 348); // ข้อศอกด้านนอกโค้งชัดเจน
+                    ctx.quadraticCurveTo(sx + dir * 32, 364, 400 + dir * 66, 364); // ท่อนแขนล่างเชื่อมถึงข้อมือ
+                    ctx.lineTo(400 + dir * 66, 344);
+                    ctx.quadraticCurveTo(sx + dir * 24, 338, sx + dir * 14, 306); // พับศอกด้านใน
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('props');
+                ctx.beginPath();
+                ctx.roundRect(335, 322, 130, 64, 8);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(400, 322); ctx.lineTo(400, 386);
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // มือสองข้างพร้อมนิ้วทั้ง 4 โอบจับขอบหนังสืออย่างสมจริง
+                renderRealisticHand(ctx, 334, 355, 0, 1, 1, 'hold_edge', skinColor, colorMode);
+                renderRealisticHand(ctx, 466, 355, 0, -1, 1, 'hold_edge', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 400, 190, 0, { colorMode });
+            }
+
+            // 3. ท่านอน (SLEEP)
+            else if (poseKey === 'sleep') {
+                setGroupStyle('props');
+                ctx.beginPath();
+                ctx.roundRect(130, 280, 540, 190, 30);
+                if (colorMode) { ctx.fillStyle = '#e0f2fe'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(160, 235, 195, 150, 28);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(600, 135, 34, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.roundRect(320, 285, 95, 95, 20);
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(365, 265, 255, 175, 28);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(445, 265); ctx.lineTo(445, 440);
+                ctx.moveTo(535, 265); ctx.lineTo(535, 440);
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // เท้าเปล่าสองข้างโผล่พ้นปลายผ้าห่ม (มีข้อเท้า ส้นเท้า และนิ้วเท้าสมจริง)
+                [322, 386].forEach((fy, idx) => {
+                    const tilt = idx === 0 ? -4 : 4;
+                    ctx.beginPath();
+                    ctx.moveTo(618, fy - 12);
+                    ctx.lineTo(632, fy - 14 + tilt); // ข้อเท้าด้านบน
+                    ctx.quadraticCurveTo(652, fy - 24 + tilt, 656, fy - 8 + tilt); // ปลายนิ้วเท้า
+                    ctx.quadraticCurveTo(658, fy + 12 + tilt, 636, fy + 16 + tilt); // ฝ่าเท้าและส้นเท้า
+                    ctx.lineTo(618, fy + 10);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // รอยหยักนิ้วเท้าเล็กๆ
+                    ctx.beginPath();
+                    ctx.arc(651, fy - 10 + tilt, 3.5, -0.5, 1.5);
+                    ctx.stroke();
+                });
+
+                // แขนข้างบนพับข้อศอกขึ้นวางมือบนหมอนเหนือศีรษะอย่างชัดเจน
+                ctx.beginPath();
+                ctx.moveTo(352, 285);
+                ctx.quadraticCurveTo(346, 232, 316, 224); // ขอบแขนด้านนอกโค้งผ่านข้อศอก
+                ctx.lineTo(312, 244);
+                ctx.quadraticCurveTo(332, 252, 334, 285); // ขอบแขนด้านใน
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 304, 234, -1.2, 0.95, 0.95, 'open', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 265, 310, -0.25, { colorMode, eyeState: 'sleep' });
+
+                setGroupStyle('limbs');
+                // แขนข้างล่างพับข้อศอกวางพาดด้านหน้าผ้าห่ม (วาดหลังศีรษะเพื่อให้เห็นท่อนแขนเต็มไม่ขาดหาย)
+                ctx.beginPath();
+                ctx.moveTo(334, 362);
+                ctx.quadraticCurveTo(324, 398, 346, 412); // ข้อศอกด้านล่าง
+                ctx.quadraticCurveTo(372, 418, 404, 404); // ท่อนแขนวางพาดผ้าห่ม
+                ctx.lineTo(396, 384);
+                ctx.quadraticCurveTo(362, 392, 356, 362);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 412, 392, 1.35, 0.95, 0.95, 'open', skinColor, colorMode);
+            }
+
+            // 4. ท่าทำกับข้าว (COOK)
+            else if (poseKey === 'cook') {
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.roundRect(340, 265, 120, 130, 18);
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(352, 280, 96, 135, 14);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(374, 340, 52, 34, 8);
+                if (colorMode) { ctx.fillStyle = '#fef08a'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนซ้าย (ฝั่งถือตะหลิว): มีแขนเสื้อ ข้อศอกพับขึ้น และมือกำด้ามตะหลิว
+                ctx.beginPath();
+                ctx.moveTo(344, 270);
+                ctx.lineTo(316, 282);
+                ctx.lineTo(326, 306);
+                ctx.lineTo(344, 296);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(316, 282);
+                ctx.quadraticCurveTo(294, 294, 276, 284); // ต้นแขนถึงพับศอกด้านใน
+                ctx.lineTo(250, 262); // ท่อนแขนยกขึ้นหาด้ามตะหลิว
+                ctx.lineTo(236, 278);
+                ctx.quadraticCurveTo(276, 312, 292, 314); // ข้อศอกด้านล่าง
+                ctx.quadraticCurveTo(310, 314, 326, 306);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือซ้ายกำด้ามตะหลิวเห็นข้อนิ้วทั้ง 4 และนิ้วโป้งล็อกด้าม
+                renderRealisticHand(ctx, 236, 265, -0.4, 1, 1, 'grip', skinColor, colorMode);
+
+                // แขนขวา (ฝั่งจับด้ามกระทะ): มีแขนเสื้อ ต้นแขน ข้อศอก ท่อนแขนเอื้อมจับด้ามกระทะ
+                ctx.beginPath();
+                ctx.moveTo(456, 270);
+                ctx.lineTo(484, 284);
+                ctx.lineTo(470, 308);
+                ctx.lineTo(456, 296);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(484, 284);
+                ctx.quadraticCurveTo(506, 306, 516, 336); // ต้นแขนและข้อศอกด้านนอก
+                ctx.lineTo(526, 368); // ข้อมือเอื้อมถึงด้ามกระทะ
+                ctx.lineTo(504, 374);
+                ctx.quadraticCurveTo(492, 344, 486, 328); // พับศอกด้านใน
+                ctx.lineTo(470, 308);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือขวากำด้ามกระทะเห็นนิ้วมือเรียงกันสมจริง
+                renderRealisticHand(ctx, 518, 378, 0.5, 1, 1, 'grip', skinColor, colorMode);
+
+                setGroupStyle('props');
+                ctx.beginPath();
+                ctx.roundRect(230, 195, 12, 68, 5);
+                ctx.roundRect(214, 155, 42, 40, 8);
+                if (colorMode) { ctx.fillStyle = '#94a3b8'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.roundRect(150, 415, 500, 115, 16);
+                if (colorMode) { ctx.fillStyle = '#fed7aa'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(395, 405, 78, 24, 0, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#475569'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(472, 400); ctx.lineTo(535, 372); ctx.lineTo(540, 385); ctx.lineTo(472, 412); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#ef4444'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(395, 360, 38, 22, -0.08, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(395, 358, 12, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 400, 195, 0, { colorMode, chefHat: true });
+            }
+
+            // 5. ท่าเล่นกีฬา (SPORT)
+            else if (poseKey === 'sport') {
+                setGroupStyle('props');
+                ctx.beginPath();
+                ctx.arc(545, 445, 42, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(545, 445, 16, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#1e293b'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('body');
+                ctx.save();
+                ctx.translate(380, 315);
+                ctx.rotate(-0.15);
+                ctx.beginPath();
+                ctx.roundRect(-52, -65, 104, 108, 18);
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, -52, -65, 104, 108);
+
+                ctx.beginPath();
+                ctx.roundRect(-54, 38, 108, 48, 14);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+                ctx.restore();
+
+                setGroupStyle('limbs');
+                // ขาซ้าย (ขายืนหลักรับน้ำหนัก): มีต้นขา หัวเข่า น่อง ถุงเท้ากีฬา และรองเท้าสตั๊ด/ผ้าใบเหยียบพื้น
+                ctx.beginPath();
+                ctx.moveTo(346, 394);
+                ctx.lineTo(384, 396);
+                ctx.quadraticCurveTo(380, 426, 372, 446); // ต้นขาและหัวเข่า
+                ctx.quadraticCurveTo(366, 466, 356, 484); // หน้าแข้ง
+                ctx.lineTo(328, 480);
+                ctx.quadraticCurveTo(326, 456, 338, 438); // โค้งน่องด้านหลัง
+                ctx.quadraticCurveTo(342, 416, 346, 394);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // รอยโค้งหัวเข่าขายืน
+                ctx.beginPath();
+                ctx.moveTo(358, 438);
+                ctx.quadraticCurveTo(366, 440, 368, 446);
+                ctx.stroke();
+
+                // ถุงเท้าฟุตบอลขายืน
+                ctx.beginPath();
+                ctx.moveTo(328, 480);
+                ctx.lineTo(356, 484);
+                ctx.lineTo(352, 502);
+                ctx.lineTo(324, 498);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+
+                // รองเท้ากีฬาขายืน
+                ctx.beginPath();
+                ctx.moveTo(324, 498);
+                ctx.lineTo(352, 502);
+                ctx.quadraticCurveTo(372, 508, 370, 518);
+                ctx.quadraticCurveTo(366, 524, 314, 518);
+                ctx.quadraticCurveTo(312, 506, 324, 498);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                ctx.stroke();
+
+                // ขาขวา (ขาเตะลูกฟุตบอล): งอเข่าส่งแรงเตะ มีต้นขา หัวเข่า น่อง ถุงเท้า และรองเท้ากำลังสัมผัสบอล
+                ctx.beginPath();
+                ctx.moveTo(396, 390);
+                ctx.lineTo(430, 372);
+                ctx.quadraticCurveTo(454, 386, 464, 402); // ต้นขาและหัวเข่าด้านบน
+                ctx.quadraticCurveTo(476, 414, 486, 424); // หน้าแข้งพุ่งไปหาลูกบอล
+                ctx.lineTo(468, 446);
+                ctx.quadraticCurveTo(444, 436, 432, 422); // ส่วนโค้งน่องขาเตะ
+                ctx.quadraticCurveTo(414, 408, 396, 390);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // รอยโค้งหัวเข่าขาเตะ
+                ctx.beginPath();
+                ctx.moveTo(448, 398);
+                ctx.quadraticCurveTo(456, 398, 460, 404);
+                ctx.stroke();
+
+                // ถุงเท้าฟุตบอลขาเตะ
+                ctx.beginPath();
+                ctx.moveTo(468, 446);
+                ctx.lineTo(486, 424);
+                ctx.lineTo(500, 436);
+                ctx.lineTo(482, 458);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+
+                // รองเท้ากีฬาขาเตะ (เฉียงขึ้นรับลูกฟุตบอล)
+                ctx.beginPath();
+                ctx.moveTo(482, 458);
+                ctx.lineTo(500, 436);
+                ctx.quadraticCurveTo(516, 420, 524, 428);
+                ctx.quadraticCurveTo(532, 436, 502, 468);
+                ctx.quadraticCurveTo(490, 470, 482, 458);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                ctx.stroke();
+
+                // แขนซ้ายกางทรงตัว (มีแขนเสื้อ ข้อศอกงอขึ้น และมือสมจริง)
+                ctx.beginPath();
+                ctx.moveTo(324, 262);
+                ctx.lineTo(298, 274);
+                ctx.lineTo(308, 298);
+                ctx.lineTo(330, 288);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(298, 274);
+                ctx.quadraticCurveTo(278, 282, 254, 266); // พับศอกและท่อนแขนซ้าย
+                ctx.lineTo(244, 284);
+                ctx.quadraticCurveTo(276, 306, 308, 298); // ข้อศอกด้านล่าง
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือซ้ายกางนิ้วทั้ง 5 ทรงตัวขณะวิ่งเตะฟุตบอล
+                renderRealisticHand(ctx, 240, 272, -1.1, 1, 1, 'open', skinColor, colorMode);
+
+                // แขนขวาเหวี่ยงส่งแรง (มีแขนเสื้อ ข้อศอก และมือสมจริง)
+                ctx.beginPath();
+                ctx.moveTo(426, 246);
+                ctx.lineTo(454, 252);
+                ctx.lineTo(446, 278);
+                ctx.lineTo(424, 272);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(454, 252);
+                ctx.quadraticCurveTo(478, 258, 504, 242); // พับศอกและท่อนแขนขวาชูขึ้นเล็กน้อย
+                ctx.lineTo(514, 260);
+                ctx.quadraticCurveTo(482, 282, 446, 278);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                // มือขวากางนิ้วทั้ง 5 ทรงตัวสมจริง
+                renderRealisticHand(ctx, 518, 248, 0.9, -1, 1, 'open', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 370, 175, -0.12, { colorMode, sweatband: true });
+            }
+
+            // 6. ท่ารดน้ำต้นไม้ (PLANT - หมวดสิ่งแวดล้อมรักษ์โลก)
+            else if (poseKey === 'plant') {
+                setGroupStyle('props');
+                // กระถางต้นไม้และดอกไม้ด้านขวา
+                ctx.beginPath();
+                ctx.moveTo(545, 455); ctx.lineTo(625, 455);
+                ctx.lineTo(612, 526); ctx.lineTo(558, 526);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#d97706'; ctx.fill(); }
+                ctx.stroke();
+
+                // ลำต้นและใบไม้คู่
+                ctx.beginPath();
+                ctx.moveTo(585, 455); ctx.quadraticCurveTo(582, 415, 585, 385);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(564, 422, 20, 10, -0.4, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#22c55e'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(606, 415, 20, 10, 0.4, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#22c55e'; ctx.fill(); }
+                ctx.stroke();
+
+                // ดอกไม้บานบนยอด
+                ctx.beginPath();
+                ctx.arc(585, 372, 18, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#f43f5e'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(585, 372, 8, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // ขาสองข้างยืนมั่นคง (มีต้นขา หัวเข่า น่อง ถุงเท้า และรองเท้าผ้าใบ)
+                [-1, 1].forEach(dir => {
+                    const lx = 375 + dir * 32;
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 405);
+                    ctx.lineTo(lx + 15, 405);
+                    ctx.quadraticCurveTo(lx + 18, 445, lx + 13, 490);
+                    ctx.lineTo(lx - 13, 490);
+                    ctx.quadraticCurveTo(lx - 18, 445, lx - 15, 405);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(lx, 445, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.roundRect(lx - 14, 490, 28, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 506);
+                    ctx.lineTo(lx + 15, 506);
+                    ctx.quadraticCurveTo(lx + 34, 508, lx + 32, 522);
+                    ctx.lineTo(lx - 16, 522);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(326, 252); ctx.lineTo(424, 252); ctx.lineTo(432, 360); ctx.lineTo(318, 360); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 322, 252, 106, 108);
+
+                ctx.beginPath();
+                ctx.roundRect(318, 360, 114, 48, 12);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนซ้ายยกขึ้นโบกทักทายต้นไม้ (แก้ไขเส้นขอบแขนขนานกันชัดเจน ไม่ไขว้ทับกัน)
+                ctx.beginPath();
+                ctx.moveTo(326, 256);
+                ctx.lineTo(298, 246);
+                ctx.lineTo(290, 270);
+                ctx.lineTo(322, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(298, 246);
+                ctx.quadraticCurveTo(280, 238, 272, 218); // ท่อนแขนด้านในยกขึ้น
+                ctx.lineTo(252, 226); // ข้อมือ
+                ctx.quadraticCurveTo(264, 262, 290, 270); // ข้อศอกและท้องแขนด้านนอก
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 260, 214, -0.35, 1, 1, 'open', skinColor, colorMode);
+
+                // แขนขวายื่นถือบัวรดน้ำ
+                ctx.beginPath();
+                ctx.moveTo(424, 256);
+                ctx.lineTo(452, 268);
+                ctx.lineTo(440, 292);
+                ctx.lineTo(420, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(452, 268);
+                ctx.quadraticCurveTo(472, 284, 490, 290);
+                ctx.lineTo(484, 310);
+                ctx.quadraticCurveTo(458, 306, 440, 292);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('props');
+                // บัวรดน้ำและสายน้ำโปรยปราย
+                ctx.beginPath();
+                ctx.arc(492, 305, 18, 0.5 * Math.PI, 1.8 * Math.PI);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(492, 292, 56, 46, 10);
+                if (colorMode) { ctx.fillStyle = '#38bdf8'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(548, 310); ctx.lineTo(576, 332); ctx.lineTo(570, 342); ctx.lineTo(548, 326); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#0284c7'; ctx.fill(); }
+                ctx.stroke();
+
+                // หยดน้ำจากฝักบัว
+                ctx.beginPath();
+                ctx.ellipse(578, 352, 3, 6, 0.3, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#38bdf8'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(590, 355, 3, 6, 0.3, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#38bdf8'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                renderRealisticHand(ctx, 486, 302, 0.2, 1, 1, 'grip', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 375, 185, 0.05, { colorMode });
+            }
+
+            // 7. ท่าวาดรูปศิลปะ (PAINT - หมวดความคิดสร้างสรรค์)
+            else if (poseKey === 'paint') {
+                setGroupStyle('props');
+                // ขาตั้งวาดภาพและกระดานผ้าใบด้านขวา
+                ctx.beginPath();
+                ctx.moveTo(575, 180); ctx.lineTo(525, 520);
+                ctx.moveTo(575, 180); ctx.lineTo(635, 520);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.roundRect(518, 215, 118, 155, 10);
+                if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                ctx.stroke();
+                // รูปพระอาทิตย์และภูเขาบนเฟรมผ้าใบ
+                ctx.beginPath();
+                ctx.arc(595, 255, 16, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(522, 355); ctx.lineTo(562, 305); ctx.lineTo(605, 355); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#4ade80'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // ขาสองข้างยืนวาดรูปสมจริง
+                [-1, 1].forEach(dir => {
+                    const lx = 365 + dir * 32;
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 405); ctx.lineTo(lx + 15, 405);
+                    ctx.quadraticCurveTo(lx + 18, 445, lx + 13, 490);
+                    ctx.lineTo(lx - 13, 490);
+                    ctx.quadraticCurveTo(lx - 18, 445, lx - 15, 405);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.roundRect(lx - 14, 490, 28, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 506); ctx.lineTo(lx + 15, 506);
+                    ctx.quadraticCurveTo(lx + dir * 30, 508, lx + dir * 28, 522);
+                    ctx.lineTo(lx - dir * 16, 522);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(316, 252); ctx.lineTo(414, 252); ctx.lineTo(422, 360); ctx.lineTo(308, 360); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 312, 252, 106, 108);
+
+                ctx.beginPath();
+                ctx.roundRect(308, 360, 114, 48, 12);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนซ้ายประคองจานสี (วาดหลังลำตัวเพื่อให้เห็นแขนเสื้อและท่อนแขนเต็มชัดเจน)
+                ctx.beginPath();
+                ctx.moveTo(316, 256);
+                ctx.lineTo(288, 270);
+                ctx.lineTo(300, 294);
+                ctx.lineTo(316, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(288, 270);
+                ctx.quadraticCurveTo(260, 290, 266, 324); // ข้อศอกและท่อนแขนด้านนอก
+                ctx.lineTo(288, 324);
+                ctx.quadraticCurveTo(286, 300, 300, 294); // พับศอกด้านในหนาสมส่วน
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('props');
+                // จานสีศิลปิน
+                ctx.beginPath();
+                ctx.ellipse(258, 338, 42, 24, -0.15, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#fde68a'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(238, 334, 7, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#ec4899'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(258, 324, 7, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#3b82f6'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                renderRealisticHand(ctx, 278, 330, 0.3, 1, 1, 'grip', skinColor, colorMode);
+
+                // แขนขวายื่นจับพู่กันวาดภาพบนเฟรม
+                ctx.beginPath();
+                ctx.moveTo(414, 256);
+                ctx.lineTo(442, 268);
+                ctx.lineTo(430, 292);
+                ctx.lineTo(414, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(442, 268);
+                ctx.quadraticCurveTo(468, 278, 496, 266);
+                ctx.lineTo(502, 286);
+                ctx.quadraticCurveTo(466, 302, 430, 292);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('props');
+                // ด้ามพู่กันและปลายพู่กัน
+                ctx.beginPath();
+                ctx.moveTo(486, 284); ctx.lineTo(536, 254); ctx.lineTo(540, 260); ctx.lineTo(490, 290); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#9a3412'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(544, 252, 9, 5, -0.5, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#ef4444'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                renderRealisticHand(ctx, 502, 276, -0.35, 1, 1, 'grip', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 365, 185, 0, { colorMode });
+            }
+
+            // 8. ท่ากระโดดดีใจชูสองนิ้ว (HAPPY - หมวดแสดงอารมณ์ดีใจ/ภูมิใจ)
+            else if (poseKey === 'happy') {
+                setGroupStyle('props');
+                // เงาพื้นด้านล่างและดวงดาวแห่งความสำเร็จซ้าย-ขวา
+                ctx.beginPath();
+                ctx.ellipse(400, 528, 85, 16, 0, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#cbd5e1'; ctx.fill(); }
+                ctx.stroke();
+
+                [195, 605].forEach(sx => {
+                    ctx.beginPath();
+                    ctx.arc(sx, 165, 22, 0, Math.PI * 2);
+                    if (colorMode) { ctx.fillStyle = '#facc15'; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('limbs');
+                // ขาสองข้างพับเข่ากระโดดลอยตัวกลางอากาศสมจริง
+                [-1, 1].forEach(dir => {
+                    const kx = 400 + dir * 48;
+                    ctx.beginPath();
+                    ctx.moveTo(400 + dir * 16, 382);
+                    ctx.lineTo(400 + dir * 46, 382);
+                    ctx.quadraticCurveTo(kx + dir * 24, 412, kx + dir * 14, 436); // หัวเข่ากางออก
+                    ctx.quadraticCurveTo(kx + dir * 28, 458, kx + dir * 38, 476); // น่องพับขึ้นกลางอากาศ
+                    ctx.lineTo(kx + dir * 14, 486);
+                    ctx.quadraticCurveTo(kx - dir * 2, 462, kx - dir * 12, 434);
+                    ctx.quadraticCurveTo(400 + dir * 12, 410, 400 + dir * 16, 382);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // ถุงเท้าและรองเท้าผ้าใบลอยตัว
+                    ctx.beginPath();
+                    ctx.roundRect(kx + (dir > 0 ? 12 : -38), 472, 26, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.ellipse(kx + dir * 28, 496, 22, 11, dir * 0.35, 0, Math.PI * 2);
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(352, 232); ctx.lineTo(448, 232); ctx.lineTo(456, 338); ctx.lineTo(344, 338); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 348, 232, 104, 106);
+
+                ctx.beginPath();
+                ctx.roundRect(342, 338, 116, 46, 14);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนสองข้างชูขึ้นฟ้าพร้อมมือชูสองนิ้ว (แก้ไขให้เส้นขอบแขนด้านในและด้านนอกขนานกันสวยงาม ไม่บิดทับกัน)
+                [-1, 1].forEach(dir => {
+                    const sx = 400 + dir * 48;
+                    // แขนเสื้อเฉียงขึ้น
+                    ctx.beginPath();
+                    ctx.moveTo(sx, 236);
+                    ctx.lineTo(sx + dir * 24, 220);
+                    ctx.lineTo(sx + dir * 34, 242);
+                    ctx.lineTo(sx + dir * 4, 258);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // ท่อนแขนชูขึ้นฟ้าเต็มทรง
+                    ctx.beginPath();
+                    ctx.moveTo(sx + dir * 24, 220);
+                    ctx.quadraticCurveTo(sx + dir * 42, 198, sx + dir * 46, 168); // ขอบแขนด้านใน
+                    ctx.lineTo(sx + dir * 66, 174); // ข้อมือ
+                    ctx.quadraticCurveTo(sx + dir * 60, 212, sx + dir * 34, 242); // ขอบแขนด้านนอกและข้อศอก
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    renderRealisticHand(ctx, sx + dir * 56, 158, dir * 0.25, dir, 1, 'peace', skinColor, colorMode);
+                });
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 400, 165, 0, { colorMode, eyeState: 'happy' });
+            }
+
+            // 9. ท่าร้องไห้เสียใจ (CRY - หมวดแสดงอารมณ์เสียใจ)
+            else if (poseKey === 'cry') {
+                setGroupStyle('props');
+                // ไอศกรีมโคนตกพื้นด้านขวา
+                ctx.beginPath();
+                ctx.moveTo(555, 472); ctx.lineTo(595, 512); ctx.lineTo(542, 518); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#d97706'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(532, 516, 32, 14, 0, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#f472b6'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // ขาสองข้างยืนสมจริง (มีต้นขา หัวเข่า น่อง ถุงเท้า และรองเท้าผ้าใบครบสมบูรณ์)
+                [-1, 1].forEach(dir => {
+                    const lx = 400 + dir * 30;
+                    // ต้นขา หัวเข่า และน่อง
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 405);
+                    ctx.lineTo(lx + 15, 405);
+                    ctx.quadraticCurveTo(lx + 17 - dir * 2, 446, lx + 13, 490);
+                    ctx.lineTo(lx - 13, 490);
+                    ctx.quadraticCurveTo(lx - 17 - dir * 2, 446, lx - 15, 405);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    // รอยโค้งหัวเข่า
+                    ctx.beginPath();
+                    ctx.arc(lx - dir * 2, 445, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+                    ctx.stroke();
+
+                    // ถุงเท้า
+                    ctx.beginPath();
+                    ctx.roundRect(lx - 14, 490, 28, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    // รองเท้าผ้าใบ
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 506);
+                    ctx.lineTo(lx + 15, 506);
+                    ctx.quadraticCurveTo(lx + dir * 30, 508, lx + dir * 28, 522);
+                    ctx.lineTo(lx - dir * 16, 522);
+                    ctx.quadraticCurveTo(lx - dir * 18, 512, lx - 15, 506);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(352, 252); ctx.lineTo(448, 252); ctx.lineTo(456, 360); ctx.lineTo(344, 360); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 348, 252, 104, 108);
+
+                ctx.beginPath();
+                ctx.roundRect(344, 360, 112, 48, 12);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 400, 185, 0, { colorMode, eyeState: 'cry' });
+
+                setGroupStyle('limbs');
+                // แขนซ้ายพับข้อศอกยกมือขึ้นเช็ดน้ำตาข้างแก้ม (เส้นขอบแขนด้านในและด้านนอกขนานกันสมจริง ไม่บิดทับกัน)
+                ctx.beginPath();
+                ctx.moveTo(352, 256);
+                ctx.lineTo(322, 264);
+                ctx.lineTo(328, 290);
+                ctx.lineTo(348, 284);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(322, 264);
+                ctx.lineTo(306, 262); // พับศอกด้านใน
+                ctx.quadraticCurveTo(322, 244, 334, 224); // ท่อนแขนด้านในยกขึ้นหาแก้ม
+                ctx.lineTo(316, 216); // ข้อมือ
+                ctx.quadraticCurveTo(294, 240, 284, 266); // ท่อนแขนด้านนอกลงมาหาข้อศอก
+                ctx.quadraticCurveTo(282, 288, 304, 292); // มุมโค้งข้อศอกด้านล่าง
+                ctx.lineTo(328, 290);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 326, 212, 0.45, 0.95, 0.95, 'open', skinColor, colorMode);
+
+                // แขนขวาทิ้งตัวลงกางฝ่ามือตกใจ/เสียใจที่ไอศกรีมตก
+                ctx.beginPath();
+                ctx.moveTo(448, 256);
+                ctx.lineTo(476, 268);
+                ctx.lineTo(464, 292);
+                ctx.lineTo(450, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(476, 268);
+                ctx.quadraticCurveTo(498, 292, 508, 328);
+                ctx.lineTo(488, 336);
+                ctx.quadraticCurveTo(478, 304, 464, 292);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 500, 344, 2.65, 1, 1, 'open', skinColor, colorMode);
+            }
+
+            // 10. ท่าสำรวจโลกส่องแว่นขยาย (SCIENCE - หมวดวิทยาศาสตร์และเทคโนโลยี)
+            else if (poseKey === 'science') {
+                setGroupStyle('props');
+                // โขดหิน ใบไม้ และแมลงเต่าทองด้านขวา
+                ctx.beginPath();
+                ctx.ellipse(585, 495, 58, 28, 0, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#94a3b8'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.ellipse(575, 462, 28, 14, -0.2, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#22c55e'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(578, 456, 10, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#ef4444'; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // ขาซ้ายและขาขวาก้าวย่อตัวสำรวจ
+                [-1, 1].forEach(dir => {
+                    const lx = 370 + dir * 34;
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 405); ctx.lineTo(lx + 15, 405);
+                    ctx.quadraticCurveTo(lx + 20, 445, lx + 14, 490);
+                    ctx.lineTo(lx - 14, 490);
+                    ctx.quadraticCurveTo(lx - 16, 445, lx - 15, 405);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.roundRect(lx - 14, 490, 28, 16, 4);
+                    if (colorMode) { ctx.fillStyle = '#ffffff'; ctx.fill(); }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.moveTo(lx - 15, 506); ctx.lineTo(lx + 15, 506);
+                    ctx.quadraticCurveTo(lx + 34, 508, lx + 32, 522);
+                    ctx.lineTo(lx - 16, 522);
+                    ctx.closePath();
+                    if (colorMode) { ctx.fillStyle = shoeColor; ctx.fill(); }
+                    ctx.stroke();
+                });
+
+                setGroupStyle('body');
+                ctx.beginPath();
+                ctx.moveTo(320, 252); ctx.lineTo(420, 252); ctx.lineTo(428, 360); ctx.lineTo(312, 360); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+                renderTorsoDetails(ctx, 316, 252, 108, 108);
+
+                ctx.beginPath();
+                ctx.roundRect(312, 360, 116, 48, 12);
+                if (colorMode) { ctx.fillStyle = bottomColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                // แขนซ้ายแบมือตื่นเต้น (วาดหลังลำตัวเพื่อให้แขนเสื้อและท่อนแขนไม่ถูกตัดแหว่ง)
+                ctx.beginPath();
+                ctx.moveTo(320, 256);
+                ctx.lineTo(292, 270);
+                ctx.lineTo(304, 294);
+                ctx.lineTo(320, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(292, 270);
+                ctx.quadraticCurveTo(266, 292, 274, 326);
+                ctx.lineTo(296, 324);
+                ctx.quadraticCurveTo(290, 300, 304, 294);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                renderRealisticHand(ctx, 286, 334, 2.8, 1, 1, 'open', skinColor, colorMode);
+
+                // แขนขวายื่นถือแว่นขยายส่องดูแมลง
+                ctx.beginPath();
+                ctx.moveTo(420, 256);
+                ctx.lineTo(448, 268);
+                ctx.lineTo(436, 294);
+                ctx.lineTo(420, 282);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = shirtColor; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(448, 268);
+                ctx.quadraticCurveTo(474, 286, 496, 286);
+                ctx.lineTo(494, 306);
+                ctx.quadraticCurveTo(464, 308, 436, 294);
+                ctx.closePath();
+                if (colorMode) { ctx.fillStyle = skinColor; ctx.fill(); }
+                ctx.stroke();
+
+                setGroupStyle('props');
+                // ด้ามและเลนส์แว่นขยายขนาดใหญ่
+                ctx.beginPath();
+                ctx.moveTo(494, 306); ctx.lineTo(526, 268); ctx.lineTo(536, 276); ctx.lineTo(504, 314); ctx.closePath();
+                if (colorMode) { ctx.fillStyle = '#475569'; ctx.fill(); }
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(556, 242, 38, 0, Math.PI * 2);
+                if (colorMode) { ctx.fillStyle = '#e0f2fe'; ctx.fill(); }
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(556, 242, 28, 0, Math.PI * 2);
+                ctx.stroke();
+
+                setGroupStyle('limbs');
+                renderRealisticHand(ctx, 502, 296, -0.3, 1, 1, 'grip', skinColor, colorMode);
+
+                setGroupStyle('head');
+                renderCharacterHead(ctx, charKey, 370, 185, 0.08, { colorMode });
+            }
+
+            ctx.restore();
+        }
+
+        /********************************************************************
+         * 4. การเรนเดอร์กระดาน เส้นประ และภาพสีตัวอย่าง (รองรับทั้งโหมด 1 ท่า และสนามแข่ง 4 ช่อง)
+         ********************************************************************/
+        function renderBackgroundAndGrid() {
+            bgCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            bgCtx.fillStyle = '#ffffff';
+            bgCtx.fillRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+
+            if (state.gameMode === 'competition') {
+                // วาดตารางแบ่ง 4 ช่องสำหรับโหมดสนามแข่งจริง (4 อิริยาบถใน 1 หน้าจอ)
+                bgCtx.save();
+                bgCtx.strokeStyle = '#94a3b8';
+                bgCtx.lineWidth = 2.5;
+                bgCtx.beginPath();
+                bgCtx.moveTo(400, 0); bgCtx.lineTo(400, 600);
+                bgCtx.moveTo(0, 300); bgCtx.lineTo(800, 300);
+                bgCtx.stroke();
+
+                // วาดป้ายชื่อช่องทั้ง 4 อิริยาบถ
+                const quads = [
+                    { x: 10, y: 10, idx: 0 },
+                    { x: 410, y: 10, idx: 1 },
+                    { x: 10, y: 310, idx: 2 },
+                    { x: 410, y: 310, idx: 3 }
+                ];
+                bgCtx.font = 'bold 13px Mali, Prompt, sans-serif';
+                quads.forEach(q => {
+                    const poseKey = state.competitionPoses[q.idx];
+                    const label = `ท่าที่ ${q.idx + 1}: ${POSE_INFO[poseKey].title.replace(/^\d+\.\s*/, '')}`;
+                    bgCtx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+                    bgCtx.beginPath();
+                    bgCtx.roundRect(q.x, q.y, 145, 24, 6);
+                    bgCtx.fill();
+                    bgCtx.fillStyle = '#0369a1';
+                    bgCtx.fillText(label, q.x + 8, q.y + 16);
+                });
+                bgCtx.restore();
+                return;
+            }
+
+            const hc = POSE_INFO[state.currentPose].headCenter;
+            bgCtx.save();
+            bgCtx.strokeStyle = 'rgba(14, 165, 233, 0.18)';
+            bgCtx.lineWidth = 1.5;
+            bgCtx.setLineDash([5, 5]);
+            bgCtx.beginPath();
+            bgCtx.moveTo(400, 40); bgCtx.lineTo(400, 560);
+            bgCtx.moveTo(80, 300); bgCtx.lineTo(720, 300);
+            bgCtx.stroke();
+
+            bgCtx.strokeStyle = 'rgba(244, 63, 94, 0.22)';
+            bgCtx.beginPath();
+            bgCtx.arc(hc.x, hc.y, 68, 0, Math.PI * 2);
+            bgCtx.stroke();
+            bgCtx.restore();
+        }
+
+        // ฟังก์ชันช่วยวาดตัวละครทั้งแบบเดี่ยวและแบบ 4 ช่อง
+        function renderScenePoseOrGrid(targetCtx, drawConfig) {
+            if (state.gameMode === 'competition') {
+                const offsets = [
+                    { x: 0, y: 0 },
+                    { x: 400, y: 0 },
+                    { x: 0, y: 300 },
+                    { x: 400, y: 300 }
+                ];
+                offsets.forEach((off, idx) => {
+                    const poseKey = state.competitionPoses[idx];
+                    targetCtx.save();
+                    targetCtx.translate(off.x, off.y);
+                    targetCtx.scale(0.5, 0.5);
+                    drawCharacterPose(targetCtx, poseKey, drawConfig);
+                    targetCtx.restore();
+                });
+
+                // ถ้าเป็นโหมดเส้นกั้นสี (hitCtx) ให้ตีเส้นแบ่ง 4 ช่องเป็นกำแพงกั้นสีด้วย
+                if (!drawConfig.colorMode && drawConfig.dashArray && drawConfig.dashArray.length === 0) {
+                    targetCtx.save();
+                    targetCtx.strokeStyle = '#000000';
+                    targetCtx.lineWidth = 6;
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(400, 0); targetCtx.lineTo(400, 600);
+                    targetCtx.moveTo(0, 300); targetCtx.lineTo(800, 300);
+                    targetCtx.stroke();
+                    targetCtx.restore();
+                }
+            } else {
+                drawCharacterPose(targetCtx, state.currentPose, drawConfig);
+            }
+        }
+
+        function renderDashedTemplate() {
+            guideCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            hitCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+
+            // วาดเส้นทึบลงใน hitCanvas สำหรับคำนวณคะแนนการลากเส้นและจุดสีรั่ว
+            renderScenePoseOrGrid(hitCtx, {
+                charKey: state.currentCharacter,
+                colorMode: false,
+                activeStep: state.currentStep,
+                dashArray: [],
+                baseStrokeColor: '#000000',
+                highlightStrokeColor: '#000000',
+                fadedStrokeColor: 'rgba(0,0,0,0)',
+                lineWidth: 9
+            });
+
+            if (!state.guideVisible) return;
+
+            let dashPattern = [9, 7];
+            if (state.dashStyle === 'dots') dashPattern = [3, 6];
+            else if (state.dashStyle === 'wide') dashPattern = [14, 12];
+
+            renderScenePoseOrGrid(guideCtx, {
+                charKey: state.currentCharacter,
+                colorMode: false,
+                activeStep: state.currentStep,
+                dashArray: dashPattern,
+                baseStrokeColor: 'rgba(37, 99, 235, 0.78)',
+                highlightStrokeColor: 'rgba(234, 88, 12, 0.95)',
+                fadedStrokeColor: 'rgba(148, 163, 184, 0.35)',
+                lineWidth: 3.2
+            });
+        }
+
+        function renderMiniColorReference() {
+            miniRefCtx.clearRect(0, 0, miniRefCanvas.width, miniRefCanvas.height);
+            miniRefCtx.save();
+            miniRefCtx.scale(miniRefCanvas.width / INTERNAL_WIDTH, miniRefCanvas.height / INTERNAL_HEIGHT);
+            renderScenePoseOrGrid(miniRefCtx, {
+                charKey: state.currentCharacter,
+                colorMode: true
+            });
+            if (state.gameMode === 'competition') {
+                miniRefCtx.strokeStyle = '#64748b';
+                miniRefCtx.lineWidth = 4;
+                miniRefCtx.beginPath();
+                miniRefCtx.moveTo(400, 0); miniRefCtx.lineTo(400, 600);
+                miniRefCtx.moveTo(0, 300); miniRefCtx.lineTo(800, 300);
+                miniRefCtx.stroke();
+            }
+            miniRefCtx.restore();
+
+            // วาดลงใน Canvas ต้นแบบขนาดใหญ่สำหรับหน้าต่างซูมด้วย
+            if (largeRefCtx) {
+                largeRefCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                largeRefCtx.fillStyle = '#ffffff';
+                largeRefCtx.fillRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                renderScenePoseOrGrid(largeRefCtx, {
+                    charKey: state.currentCharacter,
+                    colorMode: true
+                });
+                if (state.gameMode === 'competition') {
+                    largeRefCtx.strokeStyle = '#64748b';
+                    largeRefCtx.lineWidth = 3;
+                    largeRefCtx.beginPath();
+                    largeRefCtx.moveTo(400, 0); largeRefCtx.lineTo(400, 600);
+                    largeRefCtx.moveTo(0, 300); largeRefCtx.lineTo(800, 300);
+                    largeRefCtx.stroke();
+                }
+            }
+
+            const charLabel = state.currentCharacter === 'boy' ? 'เด็กชาย' : 'เด็กหญิง';
+            const poseLabel = state.gameMode === 'competition'
+                ? 'ครบ 4 อิริยาบถ'
+                : POSE_INFO[state.currentPose].title;
+            const titleEl = document.getElementById('mini-pose-title');
+            if (titleEl) titleEl.textContent = `${charLabel}: ${poseLabel}`;
+            const modalTitleEl = document.getElementById('ref-modal-title');
+            if (modalTitleEl) modalTitleEl.textContent = `ภาพต้นแบบขนาดใหญ่ - ${charLabel} (${poseLabel})`;
+        }
+
+        function renderAllTemplates() {
+            renderBackgroundAndGrid();
+            renderDashedTemplate();
+            renderMiniColorReference();
+            updateTraceProgress();
+        }
+
+        /********************************************************************
+         * 4.5 ระบบซูมและเลื่อนกระดานวาดภาพ (CANVAS ZOOM & PAN) + ขยายภาพต้นแบบ
+         ********************************************************************/
+        function clampPanPosition() {
+            const board = document.getElementById('board-container');
+            if (!board) return;
+            const bw = board.clientWidth;
+            const bh = board.clientHeight;
+            const minX = bw - bw * state.zoom;
+            const minY = bh - bh * state.zoom;
+            state.panX = Math.min(0, Math.max(minX, state.panX));
+            state.panY = Math.min(0, Math.max(minY, state.panY));
+        }
+
+        function updateZoomTransform() {
+            const viewport = document.getElementById('zoom-viewport');
+            if (!viewport) return;
+            clampPanPosition();
+            viewport.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+
+            const pct = `${Math.round(state.zoom * 100)}%`;
+            const topLabel = document.getElementById('zoom-level-label');
+            if (topLabel) topLabel.textContent = pct;
+        }
+
+        function changeZoom(delta, focusClientX, focusClientY) {
+            const board = document.getElementById('board-container');
+            if (!board) return;
+            const rect = board.getBoundingClientRect();
+
+            const prevZoom = state.zoom;
+            const nextZoom = Math.min(4.0, Math.max(1.0, +(prevZoom + delta).toFixed(2)));
+            if (nextZoom === prevZoom) return;
+
+            // ซูมโดยยึดจุดกึ่งกลางกระดาน หรือตำแหน่งเมาส์เป็นจุดโฟกัส
+            const fx = (focusClientX !== undefined ? focusClientX - rect.left : rect.width / 2);
+            const fy = (focusClientY !== undefined ? focusClientY - rect.top : rect.height / 2);
+
+            const contentX = (fx - state.panX) / prevZoom;
+            const contentY = (fy - state.panY) / prevZoom;
+
+            state.zoom = nextZoom;
+            state.panX = fx - contentX * nextZoom;
+            state.panY = fy - contentY * nextZoom;
+
+            if (state.zoom === 1 && state.tool === 'pan') {
+                selectTool('pen');
+            }
+
+            updateZoomTransform();
+        }
+
+        function resetZoom() {
+            state.zoom = 1;
+            state.panX = 0;
+            state.panY = 0;
+            if (state.tool === 'pan') selectTool('pen');
+            updateZoomTransform();
+            showToast('รีเซ็ตขนาดกระดานเป็น 100% แล้ว');
+        }
+
+        // ฟังก์ชันขยาย/ย่อกรอบภาพต้นแบบมุมขวาบน
+        function toggleRefLargeSize() {
+            const card = document.getElementById('mini-ref-card');
+            const btn = document.getElementById('btn-ref-size');
+            const body = document.getElementById('mini-ref-body');
+            if (!card || !btn) return;
+
+            if (body && body.classList.contains('hidden')) {
+                body.classList.remove('hidden');
+            }
+
+            state.isRefCardLarge = !state.isRefCardLarge;
+            if (state.isRefCardLarge) {
+                card.classList.remove('w-32', 'sm:w-44');
+                card.classList.add('w-56', 'sm:w-80');
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass-minus"></i> ย่อ';
+                showToast('ขยายกรอบภาพต้นแบบให้ดูชัดขึ้นแล้ว!');
+            } else {
+                card.classList.remove('w-56', 'sm:w-80');
+                card.classList.add('w-32', 'sm:w-44');
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i> ขยาย';
+            }
+        }
+
+        // ฟังก์ชันเปิด/ปิดและซูมภาพต้นแบบขนาดใหญ่ใน Modal
+        function openRefZoomModal() {
+            renderMiniColorReference();
+            resetRefModalZoom();
+            const modal = document.getElementById('ref-zoom-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeRefZoomModal() {
+            const modal = document.getElementById('ref-zoom-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function updateRefModalTransform() {
+            if (!largeRefCanvas) return;
+            largeRefCanvas.style.transform = `translate(${state.refModalPanX}px, ${state.refModalPanY}px) scale(${state.refModalZoom})`;
+            const label = document.getElementById('ref-modal-zoom-label');
+            if (label) label.textContent = `${Math.round(state.refModalZoom * 100)}%`;
+        }
+
+        function changeRefModalZoom(delta) {
+            state.refModalZoom = Math.min(3.5, Math.max(1.0, +(state.refModalZoom + delta).toFixed(2)));
+            if (state.refModalZoom === 1) {
+                state.refModalPanX = 0;
+                state.refModalPanY = 0;
+            }
+            updateRefModalTransform();
+        }
+
+        function resetRefModalZoom() {
+            state.refModalZoom = 1;
+            state.refModalPanX = 0;
+            state.refModalPanY = 0;
+            updateRefModalTransform();
+        }
+
+        /********************************************************************
+         * 5. ระบบวาดภาพ (ดินสอ + รูปทรงเรขาคณิตแบบ Paint + ถังเทสีฝึกสังเกต)
+         ********************************************************************/
+        function getCanvasPoint(e) {
+            const rect = drawCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * (INTERNAL_WIDTH / rect.width),
+                y: (clientY - rect.top) * (INTERNAL_HEIGHT / rect.height)
+            };
+        }
+
+        // วาดรูปทรงเรขาคณิต (เส้นตรง / วงกลม / สี่เหลี่ยม) ลงบน context ที่กำหนด
+        function renderGeometricShape(ctx, toolType, p1, p2) {
+            ctx.save();
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = state.color;
+            ctx.lineWidth = state.brushSize;
+            ctx.beginPath();
+
+            if (toolType === 'line') {
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+            } else if (toolType === 'circle') {
+                const cx = (p1.x + p2.x) / 2;
+                const cy = (p1.y + p2.y) / 2;
+                const rx = Math.abs(p2.x - p1.x) / 2;
+                const ry = Math.abs(p2.y - p1.y) / 2;
+                ctx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
+            } else if (toolType === 'rect') {
+                const x = Math.min(p1.x, p2.x);
+                const y = Math.min(p1.y, p2.y);
+                const w = Math.abs(p2.x - p1.x);
+                const h = Math.abs(p2.y - p1.y);
+                ctx.strokeRect(x, y, w, h);
+            }
+
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function startDrawing(e) {
+            const isMiddleMouse = (e.button === 1);
+            if (e.button !== undefined && e.button !== 0 && !isMiddleMouse) return;
+            e.preventDefault();
+
+            // เริ่มจับเวลาอัตโนมัติเมื่อเด็กเริ่มลงมือวาดครั้งแรก
+            if (!state.timerRunning && state.timerSeconds === 0) {
+                toggleTimer(true);
+            }
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            if (state.tool === 'pan' || isMiddleMouse) {
+                if (state.zoom <= 1.01) {
+                    showToast('กดปุ่ม + ด้านบนเพื่อซูมเข้าก่อน แล้วจึงเลื่อนกระดานดูส่วนต่างๆ ได้ครับ');
+                    return;
+                }
+                state.isPanning = true;
+                state.panStart = { x: clientX - state.panX, y: clientY - state.panY };
+                drawCanvas.style.cursor = 'grabbing';
+                return;
+            }
+
+            const pt = getCanvasPoint(e);
+            saveHistorySnapshot();
+
+            if (state.tool === 'fill') {
+                performSmartFloodFill(Math.round(pt.x), Math.round(pt.y), state.color);
+                updateTraceProgress();
+                return;
+            }
+
+            state.isDrawing = true;
+            state.lastPoint = pt;
+
+            if (state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') {
+                state.shapeStartPoint = pt;
+                return;
+            }
+
+            drawStrokeSegment(pt, pt);
+        }
+
+        function moveDrawing(e) {
+            if (state.isPanning) {
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                state.panX = clientX - state.panStart.x;
+                state.panY = clientY - state.panStart.y;
+                updateZoomTransform();
+                return;
+            }
+
+            if (!state.isDrawing) return;
+            e.preventDefault();
+            const pt = getCanvasPoint(e);
+
+            // ถ้าเป็นเครื่องมือรูปทรงเรขาคณิต ให้แสดงเส้นพรีวิวบน fxCanvas ก่อนปล่อยเมาส์
+            if (state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') {
+                fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                renderGeometricShape(fxCtx, state.tool, state.shapeStartPoint, pt);
+                state.lastPoint = pt;
+                return;
+            }
+
+            drawStrokeSegment(state.lastPoint, pt);
+            state.lastPoint = pt;
+        }
+
+        function stopDrawing() {
+            if (state.isPanning) {
+                state.isPanning = false;
+                drawCanvas.style.cursor = state.tool === 'pan' ? 'grab' : 'crosshair';
+                return;
+            }
+            if (!state.isDrawing) return;
+
+            if ((state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') && state.shapeStartPoint && state.lastPoint) {
+                fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                renderGeometricShape(drawCtx, state.tool, state.shapeStartPoint, state.lastPoint);
+                state.shapeStartPoint = null;
+            }
+
+            state.isDrawing = false;
+            state.lastPoint = null;
+            updateTraceProgress();
+        }
+
+        function drawStrokeSegment(p1, p2) {
+            if (state.tool === 'eraser') {
+                [drawCtx, colorCtx].forEach(ctx => {
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.lineWidth = state.brushSize * 1.6;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                    ctx.restore();
+                });
+                return;
+            }
+
+            // ดินสอ (pen) วาดบนชั้นเส้นขอบ (drawCtx) เพื่อกั้นสี ส่วนพู่กัน/สีเทียนระบายอยู่ชั้นสี (colorCtx)
+            const targetCtx = (state.tool === 'pen') ? drawCtx : colorCtx;
+
+            targetCtx.save();
+            targetCtx.lineCap = 'round';
+            targetCtx.lineJoin = 'round';
+            targetCtx.strokeStyle = state.color;
+            targetCtx.lineWidth = state.brushSize;
+
+            if (state.tool === 'pen' || state.tool === 'brush') {
+                targetCtx.globalAlpha = 1.0;
+                targetCtx.beginPath();
+                targetCtx.moveTo(p1.x, p1.y);
+                targetCtx.lineTo(p2.x, p2.y);
+                targetCtx.stroke();
+            } else if (state.tool === 'crayon') {
+                const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+                const steps = Math.max(1, Math.ceil(dist / 2));
+                targetCtx.fillStyle = state.color;
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    const x = p1.x + (p2.x - p1.x) * t;
+                    const y = p1.y + (p2.y - p1.y) * t;
+                    for (let j = 0; j < 4; j++) {
+                        const ox = (Math.random() - 0.5) * state.brushSize;
+                        const oy = (Math.random() - 0.5) * state.brushSize;
+                        targetCtx.globalAlpha = 0.25 + Math.random() * 0.35;
+                        targetCtx.fillRect(x + ox, y + oy, 2.2, 2.2);
+                    }
+                }
+            }
+
+            targetCtx.restore();
+        }
+
+        // ถังเทสีที่ยึดตามเส้นที่เด็กลากจริง (ถ้าเส้นขาด สีจะรั่วทะลุออกไปด้านอื่น)
+        function performSmartFloodFill(startX, startY, fillHex) {
+            if (startX < 0 || startX >= INTERNAL_WIDTH || startY < 0 || startY >= INTERNAL_HEIGHT) return;
+
+            const colorData = colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            const drawData = drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+            const guideData = hitCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+            const pixels = colorData.data;
+
+            const rFill = parseInt(fillHex.slice(1, 3), 16);
+            const gFill = parseInt(fillHex.slice(3, 5), 16);
+            const bFill = parseInt(fillHex.slice(5, 7), 16);
+
+            const startIdx = (startY * INTERNAL_WIDTH + startX) * 4;
+            const targetR = pixels[startIdx];
+            const targetG = pixels[startIdx + 1];
+            const targetB = pixels[startIdx + 2];
+            const targetA = pixels[startIdx + 3];
+
+            if (targetR === rFill && targetG === gFill && targetB === bFill && targetA === 255) return;
+
+            const visited = new Uint8Array(INTERNAL_WIDTH * INTERNAL_HEIGHT);
+            const queue = [startX + startY * INTERNAL_WIDTH];
+            visited[startX + startY * INTERNAL_WIDTH] = 1;
+
+            let filledCount = 0;
+            const leakPoints = [];
+
+            function isWall(idx4) {
+                // 1. เส้นที่เด็กลากด้วยดินสอ (drawCanvas) กั้นสีเสมอ
+                if (drawData[idx4 + 3] > 60) return true;
+                // 2. ถ้าไม่ได้เปิดโหมดเข้มงวด ให้เส้นประช่วยกั้นสีด้วย
+                if (!state.strictFillMode && state.guideVisible && guideData[idx4 + 3] > 140) return true;
+                // 3. ขอบสีเดิมที่ต่างกัน
+                return (
+                    Math.abs(pixels[idx4] - targetR) > 25 ||
+                    Math.abs(pixels[idx4 + 1] - targetG) > 25 ||
+                    Math.abs(pixels[idx4 + 2] - targetB) > 25 ||
+                    Math.abs(pixels[idx4 + 3] - targetA) > 25
+                );
+            }
+
+            while (queue.length > 0) {
+                const pos = queue.pop();
+                const x = pos % INTERNAL_WIDTH;
+                const y = (pos / INTERNAL_WIDTH) | 0;
+                const idx4 = pos * 4;
+
+                pixels[idx4] = rFill;
+                pixels[idx4 + 1] = gFill;
+                pixels[idx4 + 2] = bFill;
+                pixels[idx4 + 3] = 255;
+                filledCount++;
+
+                // บันทึกจุดที่สีไหลทะลุผ่านเส้นประที่เด็กยังไม่ได้ลากทับ
+                if (state.strictFillMode && guideData[idx4 + 3] > 160 && drawData[idx4 + 3] < 40) {
+                    if (leakPoints.length < 25 && Math.random() < 0.08) {
+                        leakPoints.push({ x, y });
+                    }
+                }
+
+                const neighbors = [
+                    x > 0 ? pos - 1 : -1,
+                    x < INTERNAL_WIDTH - 1 ? pos + 1 : -1,
+                    y > 0 ? pos - INTERNAL_WIDTH : -1,
+                    y < INTERNAL_HEIGHT - 1 ? pos + INTERNAL_WIDTH : -1
+                ];
+
+                for (let i = 0; i < 4; i++) {
+                    const nPos = neighbors[i];
+                    if (nPos !== -1 && !visited[nPos]) {
+                        visited[nPos] = 1;
+                        if (!isWall(nPos * 4)) {
+                            queue.push(nPos);
+                        }
+                    }
+                }
+            }
+
+            colorCtx.putImageData(colorData, 0, 0);
+
+            if (state.strictFillMode && leakPoints.length > 0 && filledCount > 8000) {
+                state.leakCount++;
+                flashLeakPoints(leakPoints);
+                showToast('อุ๊ย! สีไหลทะลุช่องที่ยังลากเส้นไม่ครบ กด "ย้อนกลับ" แล้วลากเส้นปิดรูรั่วดูนะ!', true);
+            } else {
+                showToast('เทสีเรียบร้อย สวยงามมาก!');
+            }
+        }
+
+        let fxTimer = null;
+        function flashLeakPoints(points) {
+            clearTimeout(fxTimer);
+            fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            fxCtx.save();
+            points.slice(0, 10).forEach(pt => {
+                fxCtx.beginPath();
+                fxCtx.arc(pt.x, pt.y, 16, 0, Math.PI * 2);
+                fxCtx.fillStyle = 'rgba(244, 63, 94, 0.28)';
+                fxCtx.fill();
+                fxCtx.lineWidth = 3;
+                fxCtx.strokeStyle = '#e11d48';
+                fxCtx.stroke();
+            });
+            fxCtx.restore();
+
+            fxTimer = setTimeout(() => {
+                fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            }, 3000);
+        }
+
+        /********************************************************************
+         * 6. ระบบเกมฝึกซ้อมแข่งขันศิลปหัตถกรรม & กรรมการให้คะแนน 100 คะแนนเต็ม
+         ********************************************************************/
+        function switchGameMode(mode) {
+            state.gameMode = mode;
+            const singleBtn = document.getElementById('mode-single-btn');
+            const compBtn = document.getElementById('mode-comp-btn');
+            const singleBar = document.getElementById('single-pose-bar');
+            const compBar = document.getElementById('comp-quadrant-bar');
+
+            if (mode === 'competition') {
+                if (singleBtn) singleBtn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-white hover:bg-white/10';
+                if (compBtn) compBtn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-amber-400 text-indigo-950';
+                if (singleBar) singleBar.classList.add('hidden');
+                if (compBar) {
+                    compBar.classList.remove('hidden');
+                    compBar.classList.add('flex');
+                }
+                showToast('เข้าสู่ "โหมดสนามแข่ง 4 ท่าใน 1 หน้าจอ"! กดปุ่มซูมช่อง 1-4 ด้านล่างเพื่อเข้าไปวาดแต่ละช่องได้เลย');
+            } else {
+                if (singleBtn) singleBtn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-amber-400 text-indigo-950';
+                if (compBtn) compBtn.className = 'px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-white hover:bg-white/10';
+                if (singleBar) singleBar.classList.remove('hidden');
+                if (compBar) {
+                    compBar.classList.add('hidden');
+                    compBar.classList.remove('flex');
+                }
+                showToast('สลับเป็น "โหมดฝึกเดี่ยว 1 ท่า" สำหรับฝึกวาดทีละท่าให้คล่อง');
+            }
+
+            resetZoom();
+            renderAllTemplates();
+        }
+
+        function randomizeCompetitionMission() {
+            state.missionIndex = (state.missionIndex + 1) % COMPETITION_MISSIONS.length;
+            const mission = COMPETITION_MISSIONS[state.missionIndex];
+            state.competitionPoses = [...mission.poses];
+
+            const titleEl = document.getElementById('mission-theme-title');
+            if (titleEl) titleEl.textContent = mission.title;
+
+            if (state.gameMode !== 'competition') {
+                switchGameMode('competition');
+            } else {
+                renderAllTemplates();
+            }
+
+            openModal(
+                `🎲 โจทย์แข่งขัน: "${mission.title}"`,
+                `${mission.desc}\n\n💡 กติกา: วาดตัวการ์ตูนตัวเดียวกันให้ครบทั้ง 4 ช่อง โดยคุมสีเสื้อ สีผม และเอกลักษณ์ให้เหมือนกันทุกช่องเพื่อคว้าเหรียญทอง!`,
+                [{ label: 'รับทราบ! เริ่มลงมือวาด', primary: true, onClick: closeModal }]
+            );
+        }
+
+        // ซูมเข้าไปยังช่องที่ 1, 2, 3 หรือ 4 ในโหมดสนามแข่ง 4 ช่องทันที
+        function focusQuadrant(quadIndex) {
+            const board = document.getElementById('board-container');
+            if (!board) return;
+            const bw = board.clientWidth;
+            const bh = board.clientHeight;
+
+            state.zoom = 2.0;
+            if (quadIndex === 0) { state.panX = 0; state.panY = 0; }
+            else if (quadIndex === 1) { state.panX = -bw; state.panY = 0; }
+            else if (quadIndex === 2) { state.panX = 0; state.panY = -bh; }
+            else if (quadIndex === 3) { state.panX = -bw; state.panY = -bh; }
+
+            updateZoomTransform();
+            const poseKey = state.competitionPoses[quadIndex];
+            showToast(`ซูมช่องที่ ${quadIndex + 1} (${POSE_INFO[poseKey].title}) เรียบร้อย!`);
+        }
+
+        // ระบบนาฬิกาจับเวลาฝึกซ้อม
+        function formatTime(sec) {
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function toggleTimer(forceStart) {
+            if (forceStart === true) state.timerRunning = true;
+            else state.timerRunning = !state.timerRunning;
+
+            const icon = document.getElementById('timer-icon');
+            if (state.timerRunning) {
+                if (icon) icon.className = 'fa-solid fa-pause';
+                clearInterval(state.timerInterval);
+                state.timerInterval = setInterval(() => {
+                    state.timerSeconds++;
+                    const disp = document.getElementById('timer-display');
+                    if (disp) disp.textContent = formatTime(state.timerSeconds);
+                }, 1000);
+            } else {
+                if (icon) icon.className = 'fa-solid fa-play';
+                clearInterval(state.timerInterval);
+            }
+        }
+
+        function resetTimer() {
+            state.timerRunning = false;
+            clearInterval(state.timerInterval);
+            state.timerSeconds = 0;
+            const disp = document.getElementById('timer-display');
+            if (disp) disp.textContent = '00:00';
+            const icon = document.getElementById('timer-icon');
+            if (icon) icon.className = 'fa-solid fa-play';
+            showToast('รีเซ็ตเวลาฝึกซ้อมเป็น 00:00 แล้ว');
+        }
+
+        function updateTraceProgress() {
+            const guidePixels = hitCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+            const userPixels = drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+
+            let totalGuide = 0;
+            let covered = 0;
+
+            for (let i = 3; i < guidePixels.length; i += 16) {
+                if (guidePixels[i] > 128) {
+                    totalGuide++;
+                    if (userPixels[i] > 50) covered++;
+                }
+            }
+
+            if (totalGuide === 0) return 0;
+            const percent = Math.min(100, Math.round((covered / totalGuide) * 210));
+
+            const bar = document.getElementById('trace-progress-bar');
+            const txt = document.getElementById('trace-progress-text');
+            if (bar) bar.style.width = `${percent}%`;
+            if (txt) txt.textContent = `${percent}%`;
+            return percent;
+        }
+
+        // ระบบกรรมการตรวจให้คะแนน 100 คะแนนเต็ม ตามเกณฑ์การแข่งขันศิลปหัตถกรรมนักเรียน
+        function evaluateCompetitionScore() {
+            const tracePct = updateTraceProgress();
+            const colorPixels = colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+            const drawPixels = drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
+
+            // นับจำนวนพิกเซลที่ลงสีและจำนวนช่องที่มีการวาด
+            let coloredCount = 0;
+            const quadActivity = [0, 0, 0, 0];
+
+            for (let y = 0; y < INTERNAL_HEIGHT; y += 4) {
+                for (let x = 0; x < INTERNAL_WIDTH; x += 4) {
+                    const idx = (y * INTERNAL_WIDTH + x) * 4;
+                    const hasColor = colorPixels[idx + 3] > 30;
+                    const hasLine = drawPixels[idx + 3] > 50;
+                    if (hasColor) coloredCount++;
+                    if (hasColor || hasLine) {
+                        const qIdx = (y >= 300 ? 2 : 0) + (x >= 400 ? 1 : 0);
+                        quadActivity[qIdx]++;
+                    }
+                }
+            }
+
+            const activeQuads = quadActivity.filter(v => v > 45).length;
+            const colorRatio = Math.min(1, coloredCount / 6500);
+
+            // 1. ความถูกต้องสมบูรณ์ของผลงาน (30 คะแนน)
+            const completenessScore = state.gameMode === 'competition'
+                ? Math.min(30, Math.round((tracePct * 0.18) + (activeQuads * 3)))
+                : Math.min(30, Math.round((tracePct * 0.24) + (colorRatio * 6)));
+
+            // 2. การออกแบบลักษณะผลงานและสัดส่วนคงที่ (25 คะแนน)
+            const consistencyScore = Math.min(25, Math.round((tracePct * 0.20) + (activeQuads >= 4 ? 5 : activeQuads)));
+
+            // 3. ความคิดสร้างสรรค์และการใช้สี (25 คะแนน)
+            const creativityScore = Math.min(25, Math.round((colorRatio * 18) + (tracePct > 30 ? 7 : tracePct * 0.2)));
+
+            // 4. ความสวยงามและประณีต เส้นปิดสนิทสีไม่รั่ว (20 คะแนน)
+            const leakPenalty = Math.min(6, state.leakCount * 2);
+            const beautyScore = Math.max(0, Math.min(20, Math.round((tracePct * 0.12) + (colorRatio * 8) - leakPenalty)));
+
+            const totalScore = completenessScore + consistencyScore + creativityScore + beautyScore;
+
+            let medalBadge = '🎖️ รางวัลชมเชย (ฝึกอีกนิดพิชิตเหรียญ!)';
+            if (totalScore >= 80) medalBadge = '🥇 เหรียญทองชนะเลิศ! (80 - 100 คะแนน)';
+            else if (totalScore >= 70) medalBadge = '🥈 เหรียญเงิน! (70 - 79 คะแนน)';
+            else if (totalScore >= 60) medalBadge = '🥉 เหรียญทองแดง! (60 - 69 คะแนน)';
+
+            const timeUsed = formatTime(state.timerSeconds);
+            const reportText =
+                `${medalBadge}\n` +
+                `คะแนนรวม: ${totalScore} / 100 คะแนน (เวลาที่ใช้: ${timeUsed})\n` +
+                `────────────────────────\n` +
+                `1. ความถูกต้องสมบูรณ์ครบถ้วน: ${completenessScore} / 30\n` +
+                `2. ลักษณะตัวละครและสัดส่วนคงที่: ${consistencyScore} / 25\n` +
+                `3. ความคิดสร้างสรรค์และการลงสี: ${creativityScore} / 25\n` +
+                `4. ความสวยงามประณีต (ไม่รั่ว): ${beautyScore} / 20`;
+
+            openModal('🏆 ผลการตัดสินของกรรมการ', reportText, [
+                { label: 'สลับโหมด 4 ช่อง', primary: false, onClick: () => { closeModal(); switchGameMode('competition'); } },
+                { label: 'ฝึกซ้อมต่อ!', primary: true, onClick: closeModal }
+            ]);
+        }
+
+        function checkMyTracing() {
+            evaluateCompetitionScore();
+        }
+
+        function selectCharacter(charKey) {
+            state.currentCharacter = charKey;
+            document.querySelectorAll('.char-card').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById(`char-${charKey}`);
+            if (btn) btn.classList.add('active');
+
+            updateStyleBadge();
+            renderAllTemplates();
+            showToast(`เปลี่ยนเป็น "${charKey === 'boy' ? 'เด็กชาย' : 'เด็กหญิง'}" แล้ว!`);
+        }
+
+        function selectPose(poseKey) {
+            state.currentPose = poseKey;
+            state.currentStep = 'all';
+
+            document.querySelectorAll('.pose-card').forEach(btn => btn.classList.remove('active'));
+            const poseBtn = document.getElementById(`pose-${poseKey}`);
+            if (poseBtn) poseBtn.classList.add('active');
+
+            document.querySelectorAll('.step-pill').forEach(btn => btn.classList.remove('active'));
+            const stepAll = document.getElementById('step-all');
+            if (stepAll) stepAll.classList.add('active');
+
+            const tipEl = document.getElementById('current-tip');
+            if (tipEl) tipEl.textContent = POSE_INFO[poseKey].tip;
+
+            renderAllTemplates();
+            showToast(`เลือกท่า "${POSE_INFO[poseKey].title}" แล้ว`);
+        }
+
+        function setPracticeStep(stepKey) {
+            state.currentStep = stepKey;
+            document.querySelectorAll('.step-pill').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById(`step-${stepKey}`);
+            if (btn) btn.classList.add('active');
+            renderDashedTemplate();
+            updateTraceProgress();
+        }
+
+        function selectTool(toolName) {
+            state.tool = toolName;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById(`tool-${toolName}`);
+            if (btn) btn.classList.add('active');
+
+            if (toolName === 'pan') {
+                drawCanvas.style.cursor = 'grab';
+            } else {
+                drawCanvas.style.cursor = 'crosshair';
+            }
+
+            if (toolName === 'pen') updateBrushSize(6);
+            else if (toolName === 'brush') updateBrushSize(14);
+            else if (toolName === 'crayon') updateBrushSize(14);
+            else if (toolName === 'eraser') updateBrushSize(20);
+        }
+
+        function updateBrushSize(size) {
+            state.brushSize = parseInt(size, 10);
+            const input = document.getElementById('brush-size');
+            if (input) input.value = state.brushSize;
+            const label = document.getElementById('brush-size-label');
+            if (label) label.textContent = `${state.brushSize} px`;
+        }
+
+        function selectColor(hex) {
+            state.color = hex;
+            const picker = document.getElementById('custom-color-picker');
+            if (picker) picker.value = hex;
+            const activeBox = document.getElementById('active-color-box');
+            if (activeBox) activeBox.style.backgroundColor = hex;
+
+            document.querySelectorAll('.color-swatch-btn').forEach(btn => {
+                if (btn.dataset.hex.toLowerCase() === hex.toLowerCase()) {
+                    btn.classList.add('ring-2', 'ring-blue-600', 'scale-110');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-blue-600', 'scale-110');
+                }
+            });
+
+            if (state.tool === 'eraser') selectTool('pen');
+        }
+
+        function toggleStrictFillMode() {
+            const el = document.getElementById('strict-fill-mode');
+            state.strictFillMode = el ? el.checked : true;
+            showToast(
+                state.strictFillMode
+                    ? 'เปิดโหมดฝึกสังเกต: ถ้าลากเส้นไม่ครบ สีจะรั่วทะลุ!'
+                    : 'เปิดโหมดช่วยกั้นสี: เส้นประช่วยกั้นสีให้อัตโนมัติ'
+            );
+        }
+
+        function toggleGuideVisibility() {
+            state.guideVisible = !state.guideVisible;
+            renderDashedTemplate();
+            showToast(state.guideVisible ? 'แสดงเส้นประต้นแบบแล้ว' : 'ซ่อนเส้นประต้นแบบแล้ว');
+        }
+
+        function updateGuideSettings() {
+            const sel = document.getElementById('dash-style-select');
+            if (sel) state.dashStyle = sel.value;
+            renderDashedTemplate();
+        }
+
+        function toggleMiniRef() {
+            const body = document.getElementById('mini-ref-body');
+            const icon = document.getElementById('mini-ref-icon');
+            if (!body || !icon) return;
+            body.classList.toggle('hidden');
+            icon.className = body.classList.contains('hidden') ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
+        }
+
+        // ระบบ Undo / Redo / Clear / Save
+        function saveHistorySnapshot() {
+            if (state.history.length >= state.maxHistory) state.history.shift();
+            state.history.push({
+                draw: drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT),
+                color: colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT)
+            });
+            state.redoStack = [];
+            updateUndoRedoButtons();
+        }
+
+        function undoStroke() {
+            if (state.history.length === 0) return;
+            state.redoStack.push({
+                draw: drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT),
+                color: colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT)
+            });
+            const prev = state.history.pop();
+            drawCtx.putImageData(prev.draw, 0, 0);
+            colorCtx.putImageData(prev.color, 0, 0);
+            updateUndoRedoButtons();
+            updateTraceProgress();
+        }
+
+        function redoStroke() {
+            if (state.redoStack.length === 0) return;
+            state.history.push({
+                draw: drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT),
+                color: colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT)
+            });
+            const next = state.redoStack.pop();
+            drawCtx.putImageData(next.draw, 0, 0);
+            colorCtx.putImageData(next.color, 0, 0);
+            updateUndoRedoButtons();
+            updateTraceProgress();
+        }
+
+        function updateUndoRedoButtons() {
+            const undoBtn = document.getElementById('btn-undo');
+            const redoBtn = document.getElementById('btn-redo');
+            if (undoBtn) undoBtn.disabled = state.history.length === 0;
+            if (redoBtn) redoBtn.disabled = state.redoStack.length === 0;
+        }
+
+        function openClearModal() {
+            openModal(
+                'ล้างกระดานเริ่มวาดใหม่?',
+                'ต้องการลบเส้นและสีที่วาดไว้ทั้งหมด เพื่อเริ่มฝึกวาดใหม่ใช่ไหมครับ? (เส้นประต้นแบบยังคงอยู่)',
+                [
+                    { label: 'ยกเลิก', primary: false, onClick: closeModal },
+                    {
+                        label: 'ลบเริ่มใหม่',
+                        danger: true,
+                        onClick: () => {
+                            saveHistorySnapshot();
+                            drawCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                            colorCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                            updateTraceProgress();
+                            closeModal();
+                            showToast('ล้างกระดานเรียบร้อย มาวาดกันใหม่เลย!');
+                        }
+                    }
+                ]
+            );
+        }
+
+        function downloadArtwork() {
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = INTERNAL_WIDTH;
+            exportCanvas.height = INTERNAL_HEIGHT;
+            const exCtx = exportCanvas.getContext('2d');
+
+            exCtx.fillStyle = '#ffffff';
+            exCtx.fillRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            exCtx.drawImage(colorCanvas, 0, 0);
+            if (state.guideVisible) exCtx.drawImage(guideCanvas, 0, 0);
+            exCtx.drawImage(drawCanvas, 0, 0);
+
+            const link = document.createElement('a');
+            link.download = `kiddraw-${state.currentCharacter}-${state.currentPose}.png`;
+            link.href = exportCanvas.toDataURL('image/png');
+            link.click();
+            showToast('บันทึกรูปภาพผลงานเรียบร้อยแล้ว!');
+        }
+
+        function openModal(title, message, actions = []) {
+            const modal = document.getElementById('app-modal');
+            document.getElementById('modal-title').textContent = title;
+            const msgEl = document.getElementById('modal-message');
+            msgEl.textContent = message;
+            msgEl.classList.add('whitespace-pre-line');
+            const container = document.getElementById('modal-actions');
+            container.innerHTML = '';
+
+            actions.forEach(act => {
+                const btn = document.createElement('button');
+                btn.textContent = act.label;
+                btn.className = act.danger
+                    ? 'kid-btn px-5 py-2 rounded-2xl bg-rose-500 hover:bg-rose-600 border-rose-700 text-white font-bold text-sm'
+                    : act.primary
+                        ? 'kid-btn px-5 py-2 rounded-2xl bg-blue-600 hover:bg-blue-700 border-blue-800 text-white font-bold text-sm'
+                        : 'kid-btn px-5 py-2 rounded-2xl bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700 font-bold text-sm';
+                btn.onclick = act.onClick;
+                container.appendChild(btn);
+            });
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('app-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        let toastTimer = null;
+        function showToast(text, isWarning = false) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toast-icon');
+            document.getElementById('toast-text').textContent = text;
+            icon.className = isWarning
+                ? 'fa-solid fa-triangle-exclamation text-amber-400 text-base'
+                : 'fa-solid fa-circle-check text-emerald-400 text-base';
+            toast.classList.remove('opacity-0', 'translate-y-3');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-3');
+            }, 3200);
+        }
+
+        function fitBoardToWorkspace() {
+            const workspace = document.getElementById('canvas-workspace');
+            const board = document.getElementById('board-container');
+            if (!workspace || !board) return;
+
+            const pad = window.innerWidth < 640 ? 6 : 12;
+            const availW = Math.max(280, workspace.clientWidth - pad);
+            const availH = Math.max(220, workspace.clientHeight - pad);
+            const aspect = INTERNAL_WIDTH / INTERNAL_HEIGHT;
+
+            let targetW = availW;
+            let targetH = targetW / aspect;
+            if (targetH > availH) {
+                targetH = availH;
+                targetW = targetH * aspect;
+            }
+
+            board.style.width = `${Math.floor(targetW)}px`;
+            board.style.height = `${Math.floor(targetH)}px`;
+            updateZoomTransform();
+        }
+
+        function initPaletteSwatches() {
+            const container = document.getElementById('color-swatches');
+            if (!container) return;
+            container.innerHTML = '';
+            PALETTE_COLORS.forEach(item => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.dataset.hex = item.hex;
+                btn.title = item.name;
+                btn.style.backgroundColor = item.hex;
+                btn.className = 'color-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded border border-slate-400 shadow-2xs transition transform hover:scale-110';
+                btn.onclick = () => selectColor(item.hex);
+                container.appendChild(btn);
+            });
+            selectColor(state.color);
+        }
+
+        // เริ่มต้นการทำงานเมื่อโหลดหน้าเว็บเสร็จสมบูรณ์
+        window.addEventListener('load', () => {
+            initPaletteSwatches();
+            updateStyleBadge();
+            selectTool('pen');
+            fitBoardToWorkspace();
+            renderAllTemplates();
+            updateUndoRedoButtons();
+
+            drawCanvas.addEventListener('mousedown', startDrawing);
+            window.addEventListener('mousemove', moveDrawing);
+            window.addEventListener('mouseup', stopDrawing);
+
+            drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+            window.addEventListener('touchmove', moveDrawing, { passive: false });
+            window.addEventListener('touchend', stopDrawing);
+
+            // ลูกกลิ้งเมาส์ใช้สำหรับเลื่อนกระดานขึ้น-ลงเมื่อขยายภาพเข้าไปเท่านั้น (ไม่ใช้ย่อ/ขยายผ่านเมาส์)
+            const boardEl = document.getElementById('board-container');
+            if (boardEl) {
+                boardEl.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    if (state.zoom > 1.01) {
+                        state.panY -= e.deltaY * 0.7;
+                        if (e.deltaX !== 0) {
+                            state.panX -= e.deltaX * 0.7;
+                        }
+                        updateZoomTransform();
+                    }
+                }, { passive: false });
+            }
+
+            // รองรับการลากเลื่อนและหมุนลูกกลิ้งเมาส์ขึ้น-ลงในหน้าต่างขยายภาพต้นแบบ (ย่อ/ขยายผ่านปุ่มเท่านั้น)
+            const refViewport = document.getElementById('ref-modal-viewport');
+            if (refViewport) {
+                refViewport.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    if (state.refModalZoom > 1.01) {
+                        state.refModalPanY -= e.deltaY * 0.7;
+                        updateRefModalTransform();
+                    }
+                }, { passive: false });
+
+                refViewport.addEventListener('mousedown', (e) => {
+                    if (state.refModalZoom <= 1.01) return;
+                    state.isRefModalPanning = true;
+                    state.refModalPanStart = {
+                        x: e.clientX - state.refModalPanX,
+                        y: e.clientY - state.refModalPanY
+                    };
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!state.isRefModalPanning) return;
+                    state.refModalPanX = e.clientX - state.refModalPanStart.x;
+                    state.refModalPanY = e.clientY - state.refModalPanStart.y;
+                    updateRefModalTransform();
+                });
+
+                window.addEventListener('mouseup', () => {
+                    state.isRefModalPanning = false;
+                });
+            }
+
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    if (e.shiftKey) redoStroke();
+                    else undoStroke();
+                } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+                    e.preventDefault();
+                    redoStroke();
+                }
+            });
+
+            window.addEventListener('resize', fitBoardToWorkspace);
+        });
+    </script>
+</body>
+</html>
