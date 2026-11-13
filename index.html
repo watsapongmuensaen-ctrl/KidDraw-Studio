@@ -557,7 +557,7 @@
                         <i class="fa-solid fa-pen-ruler text-amber-600 text-xs"></i>
                         <span>Outline <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i></span>
                     </div>
-                    <button type="button" onclick="toggleShapeFillMode()" id="btn-shape-fill" class="flex items-center gap-1 px-1.5 py-0.5 rounded border border-transparent hover:bg-blue-50 text-slate-700 transition" title="คลิกเพื่อเปิด/ปิดการเติมสีพื้นในรูปทรง (ใช้สี Color 2 หรือ Color 1)">
+                    <button type="button" onclick="toggleShapeFillMode()" id="btn-shape-fill" class="flex items-center gap-1 px-1.5 py-0.5 rounded border border-blue-400 bg-blue-100 hover:bg-blue-50 text-slate-700 transition" title="คลิกเพื่อเปิด/ปิดการเติมสีภายในรูปทรงด้วยสี Color 2">
                         <i class="fa-solid fa-fill-drip text-sky-600 text-xs"></i>
                         <span id="shape-fill-label">Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i></span>
                     </button>
@@ -693,17 +693,6 @@
                         <button type="button" onclick="commitTextTool()" class="px-2 py-0.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded">วาง</button>
                         <button type="button" onclick="cancelTextTool()" class="px-1.5 py-0.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded">✕</button>
                     </div>
-                </div>
-
-                <!-- แถบปุ่มช่วยยืนยัน/ยกเลิกรูปทรงที่กำลังดัดขนาดหรือเลื่อนตำแหน่ง (สไตล์ Windows Paint) -->
-                <div id="shape-transform-bar" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-indigo-950/90 text-white px-3 py-1 rounded-full shadow-lg border border-sky-400 items-center gap-2 z-20 text-[11px]">
-                    <span class="font-bold text-sky-200"><i class="fa-solid fa-arrows-up-down-left-right"></i> ลากย้ายหรือดึงจุดสีขาวเพื่อปรับขนาด</span>
-                    <button onclick="commitActiveShape()" class="px-2 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold">
-                        <i class="fa-solid fa-check"></i> วางรูปทรง
-                    </button>
-                    <button onclick="cancelActiveShape()" class="px-2 py-0.5 rounded-full bg-rose-500 hover:bg-rose-400 text-white font-bold">
-                        <i class="fa-solid fa-xmark"></i> ยกเลิก
-                    </button>
                 </div>
 
                 <!-- กรอบภาพสีต้นแบบ (มุมขวาบนของกระดาน คลิกที่รูปเพื่อขยายดูแบบชัดๆ ได้ทันที) -->
@@ -884,11 +873,11 @@
             competitionPoses: ['walk', 'sit', 'cook', 'sport'], // 4 ท่าในโหมดสนามแข่ง
             missionIndex: 0,
             tool: 'pen',                // 'pen' | Shapes (23 ชนิด) | 'brush' | 'marker' | 'crayon' | 'airbrush' | 'fill' | 'text' | 'eraser' | 'picker' | 'magnifier' | 'select' | 'pan'
-            activeColorSlot: 1,         // 1 = Color 1 (สีหลัก), 2 = Color 2 (สีรอง)
-            color: '#1e293b',           // Color 1
-            color2: '#ffffff',          // Color 2
+            activeColorSlot: 1,         // 1 = Color 1 (สีขอบรูปทรง/สีหลัก), 2 = Color 2 (สีภายในรูปทรง)
+            color: '#1e293b',           // Color 1 (สีเส้นขอบ)
+            color2: '#ffffff',          // Color 2 (สีพื้นภายในรูปทรง)
             brushSize: 6,
-            shapeFill: false,           // เปิด/ปิดการระบายสีทึบในรูปทรง (ปุ่ม Fill ข้างกรอบ Shapes)
+            shapeFill: true,            // เปิดการเติมสีภายในรูปทรงด้วย Color 2 เป็นค่าเริ่มต้น
             strictFillMode: true,
             guideVisible: true,
             dashStyle: 'standard',
@@ -3229,17 +3218,17 @@
             state.shapeFill = !state.shapeFill;
             const btn = document.getElementById('btn-shape-fill');
             const label = document.getElementById('shape-fill-label');
-            if (label) label.innerHTML = state.shapeFill ? 'Fill: เปิด <i class="fa-solid fa-caret-down text-[9px]"></i>' : 'Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i>';
+            if (label) label.innerHTML = state.shapeFill ? 'Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i>' : 'No Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i>';
             if (btn) {
                 btn.classList.toggle('bg-blue-100', state.shapeFill);
                 btn.classList.toggle('border-blue-400', state.shapeFill);
             }
             if (state.activeShape) {
                 state.activeShape.filled = state.shapeFill;
-                state.activeShape.fillColor = state.color2 !== '#ffffff' ? state.color2 : state.color;
+                state.activeShape.fillColor = state.color2;
                 renderActiveShapeOverlay();
             }
-            showToast(state.shapeFill ? 'เปิดโหมดเติมสีพื้นในรูปทรง (Fill)' : 'วาดเฉพาะเส้นขอบรูปทรง (Outline)');
+            showToast(state.shapeFill ? 'เปิดเติมสีภายในรูปทรงด้วย Color 2' : 'ปิดการเติมสีภายในรูปทรง (วาดเฉพาะเส้นขอบ Color 1)');
         }
 
         // เปิด/ปิดเมนูเลือกหัวแปรง (Brushes) และเมนูความหนาเส้น (Size)
@@ -3395,14 +3384,14 @@
             };
         }
 
-        // วาดรูปทรงเรขาคณิตทั้ง 23 แบบลงบน context ที่กำหนด
-        function renderShapeObject(ctx, shape) {
+        // วาดรูปทรงเรขาคณิตทั้ง 23 แบบลงบน context ที่กำหนด (Color 1 = สีขอบ, Color 2 = สีภายใน)
+        function renderShapeObject(ctx, shape, mode = 'both') {
             if (!shape) return;
             ctx.save();
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.strokeStyle = shape.color;
-            ctx.fillStyle = shape.color;
+            ctx.fillStyle = shape.fillColor !== undefined ? shape.fillColor : state.color2;
             ctx.lineWidth = shape.lineWidth;
             ctx.setLineDash([]);
             ctx.beginPath();
@@ -3527,14 +3516,28 @@
                 tracePoly([[0.38, 0], [0.78, 0], [0.54, 0.42], [0.84, 0.42], [0.24, 1], [0.44, 0.56], [0.18, 0.56]]);
             }
 
-            if (shape.filled && shape.type !== 'line' && shape.type !== 'curve') {
+            const isClosedShape = (shape.type !== 'line' && shape.type !== 'curve');
+
+            if (mode === 'eraseFill') {
+                if (isClosedShape) {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.fill();
+                }
+                ctx.restore();
+                return;
+            }
+
+            if ((mode === 'both' || mode === 'fillOnly') && shape.filled && isClosedShape) {
                 ctx.save();
-                ctx.fillStyle = shape.fillColor || shape.color;
-                ctx.globalAlpha = 0.85;
+                ctx.fillStyle = shape.fillColor !== undefined ? shape.fillColor : state.color2;
+                ctx.globalAlpha = 1.0;
                 ctx.fill();
                 ctx.restore();
             }
-            ctx.stroke();
+
+            if (mode === 'both' || mode === 'strokeOnly') {
+                ctx.stroke();
+            }
             ctx.restore();
         }
 
@@ -3577,24 +3580,11 @@
         // วาดรูปทรงพร้อมกรอบเส้นประและจุดดึงย่อ/ขยาย (Handles) บน fxCanvas เหมือน MS Paint
         function renderActiveShapeOverlay() {
             fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
-            const bar = document.getElementById('shape-transform-bar');
-
-            if (!state.activeShape) {
-                if (bar) {
-                    bar.classList.add('hidden');
-                    bar.classList.remove('flex');
-                }
-                return;
-            }
-
-            if (bar) {
-                bar.classList.remove('hidden');
-                bar.classList.add('flex');
-            }
+            if (!state.activeShape) return;
 
             const s = state.activeShape;
-            // 1. วาดตัวรูปทรงจริง
-            renderShapeObject(fxCtx, s);
+            // 1. วาดตัวรูปทรงจริง (ขอบใช้ Color 1, สีภายในใช้ Color 2)
+            renderShapeObject(fxCtx, s, 'both');
 
             // 2. วาดกรอบสี่เหลี่ยมเส้นประสีฟ้าล้อมรอบ (Selection Bounding Box)
             const xs = [s.x1, s.x2];
@@ -3609,37 +3599,28 @@
             const bottom = Math.max(...ys);
 
             fxCtx.save();
-            fxCtx.lineWidth = 1.5;
+            fxCtx.lineWidth = 1.2;
             fxCtx.strokeStyle = '#0284c7';
-            fxCtx.setLineDash([5, 4]);
+            fxCtx.setLineDash([4, 4]);
             fxCtx.strokeRect(left - 4, top - 4, (right - left) + 8, (bottom - top) + 8);
 
-            // ถ้าเป็นเส้นโค้ง (Curve) วาดเส้นไกด์เชื่อมจุดดัดโค้งให้เด็กเห็นชัดเจน
-            if (s.type === 'curve' && s.cx1 !== undefined) {
-                fxCtx.strokeStyle = 'rgba(249, 115, 22, 0.55)';
-                fxCtx.beginPath();
-                fxCtx.moveTo(s.x1, s.y1); fxCtx.lineTo(s.cx1, s.cy1);
-                fxCtx.moveTo(s.x2, s.y2); fxCtx.lineTo(s.cx2, s.cy2);
-                fxCtx.stroke();
-            }
-
-            // 3. วาดจุดจับสี่เหลี่ยมสีขาวขอบน้ำเงินสำหรับดึงย่อ/ขยาย (และจุดกลมสีส้มสำหรับดัดเส้นโค้ง)
+            // 3. วาดจุดจับสี่เหลี่ยมสีขาวขอบน้ำเงินสำหรับดึงย่อ/ขยาย (และจุดดัดโค้งสำหรับเส้น Curve)
             fxCtx.setLineDash([]);
             const handles = getShapeHandles(s);
-            const hSize = 9;
+            const hSize = 7;
             handles.forEach(h => {
                 if (h.isCurveCtrl) {
-                    fxCtx.fillStyle = '#fb923c';
-                    fxCtx.strokeStyle = '#9a3412';
-                    fxCtx.lineWidth = 2;
+                    fxCtx.fillStyle = '#ffffff';
+                    fxCtx.strokeStyle = '#0284c7';
+                    fxCtx.lineWidth = 1.5;
                     fxCtx.beginPath();
-                    fxCtx.arc(h.x, h.y, 5.5, 0, Math.PI * 2);
+                    fxCtx.rect(h.x - hSize / 2, h.y - hSize / 2, hSize, hSize);
                     fxCtx.fill();
                     fxCtx.stroke();
                 } else {
                     fxCtx.fillStyle = '#ffffff';
                     fxCtx.strokeStyle = '#1d4ed8';
-                    fxCtx.lineWidth = 2;
+                    fxCtx.lineWidth = 1.5;
                     fxCtx.beginPath();
                     fxCtx.rect(h.x - hSize / 2, h.y - hSize / 2, hSize, hSize);
                     fxCtx.fill();
@@ -3679,22 +3660,20 @@
             return null;
         }
 
-        // ยืนยันการวางรูปทรงลงบนกระดานหลัก (Stamp ลง drawCanvas และหากเปิด Fill จะระบายลง colorCanvas ด้วย)
+        // ยืนยันการวางรูปทรงลงบนกระดานหลัก (สีภายใน Color 2 ลงบน colorCtx และเส้นขอบ Color 1 ลงบน drawCtx)
         function commitActiveShape() {
             if (!state.activeShape) return;
             saveHistorySnapshot();
             if (state.activeShape.filled && state.activeShape.type !== 'line' && state.activeShape.type !== 'curve') {
-                renderShapeObject(colorCtx, state.activeShape);
+                renderShapeObject(drawCtx, state.activeShape, 'eraseFill');
+                renderShapeObject(colorCtx, state.activeShape, 'fillOnly');
             }
-            renderShapeObject(drawCtx, { ...state.activeShape, filled: false });
+            if (state.tool !== 'select') {
+                renderShapeObject(drawCtx, state.activeShape, 'strokeOnly');
+            }
             state.activeShape = null;
             state.shapeAction = null;
             fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
-            const bar = document.getElementById('shape-transform-bar');
-            if (bar) {
-                bar.classList.add('hidden');
-                bar.classList.remove('flex');
-            }
             drawCanvas.style.cursor = 'crosshair';
             updateTraceProgress();
         }
@@ -3705,11 +3684,6 @@
             state.activeShape = null;
             state.shapeAction = null;
             fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
-            const bar = document.getElementById('shape-transform-bar');
-            if (bar) {
-                bar.classList.add('hidden');
-                bar.classList.remove('flex');
-            }
             drawCanvas.style.cursor = 'crosshair';
         }
 
@@ -3791,10 +3765,10 @@
                     cy1: pt.y,
                     cx2: pt.x,
                     cy2: pt.y,
-                    color: state.color,
-                    fillColor: state.color2 !== '#ffffff' ? state.color2 : state.color,
+                    color: state.color,          // Color 1 เป็นสีเส้นขอบรูปทรงเสมอ
+                    fillColor: state.color2,     // Color 2 เป็นสีพื้นภายในรูปทรงเสมอ
                     lineWidth: state.brushSize,
-                    filled: state.shapeFill
+                    filled: state.tool === 'select' ? false : state.shapeFill
                 };
                 renderActiveShapeOverlay();
                 return;
@@ -4417,9 +4391,15 @@
             const slot2 = document.getElementById('color-slot-2');
             if (slot1) slot1.classList.toggle('active', slotNum === 1);
             if (slot2) slot2.classList.toggle('active', slotNum === 2);
+
+            const picker = document.getElementById('custom-color-picker');
+            if (picker) picker.value = slotNum === 2 ? state.color2 : state.color;
         }
 
         function selectColor(hex) {
+            const picker = document.getElementById('custom-color-picker');
+            if (picker) picker.value = hex;
+
             if (state.activeColorSlot === 2) {
                 state.color2 = hex;
                 const secBox = document.getElementById('secondary-color-box');
@@ -4432,8 +4412,6 @@
             }
 
             state.color = hex;
-            const picker = document.getElementById('custom-color-picker');
-            if (picker) picker.value = hex;
             const activeBox = document.getElementById('active-color-box');
             if (activeBox) activeBox.style.backgroundColor = hex;
 
