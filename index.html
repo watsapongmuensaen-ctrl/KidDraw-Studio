@@ -59,6 +59,191 @@
             color: white;
             border-color: #c2410c;
         }
+        /* โครงสร้าง Ribbon ของโปรแกรม Windows 10 Paint */
+        .mspaint-ribbon {
+            background: #f5f6f7;
+            border-bottom: 1px solid #dadbdc;
+            display: flex;
+            align-items: stretch;
+            padding: 3px 6px 2px 6px;
+            gap: 2px;
+            overflow-x: auto;
+            user-select: none;
+        }
+        .mspaint-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 8px 1px 8px;
+            border-right: 1px solid #d9dadd;
+            shrink: 0;
+        }
+        .mspaint-group-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+        .mspaint-group-title {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 2px;
+            line-height: 1;
+            font-family: 'Segoe UI', 'Prompt', sans-serif;
+        }
+        /* ตารางเครื่องมือ Tools 6 ช่อง (3 คอลัมน์ x 2 แถว เหมือน MS Paint) */
+        .mspaint-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 28px);
+            grid-template-rows: repeat(2, 28px);
+            gap: 2px;
+        }
+        .mspaint-icon-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .mspaint-icon-btn:hover {
+            background: #e8f1fb;
+            border-color: #a4cef9;
+        }
+        .mspaint-icon-btn.active,
+        .mspaint-tall-btn.active {
+            background: #cce4f7;
+            border-color: #62a2e4;
+            box-shadow: inset 0 0 2px rgba(29, 78, 216, 0.2);
+        }
+        .mspaint-tall-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 6px;
+            height: 62px;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.1s ease;
+        }
+        .mspaint-tall-btn:hover {
+            background: #e8f1fb;
+            border-color: #a4cef9;
+        }
+        /* กรอบเลือกรูปทรง (Shapes Gallery) สไตล์ Windows Paint */
+        .mspaint-shapes-frame {
+            display: flex;
+            background: #ffffff;
+            border: 1px solid #a0b4cc;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .mspaint-shapes-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 22px);
+            grid-auto-rows: 19px;
+            gap: 1px;
+            padding: 2px 3px;
+            max-height: 62px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .mspaint-shapes-grid::-webkit-scrollbar {
+            display: none;
+        }
+        .mspaint-shape-btn {
+            width: 22px;
+            height: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            background: transparent;
+            padding: 1px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+        .mspaint-shape-btn:hover {
+            background: linear-gradient(180deg, #f0f7ff 0%, #dcebfd 100%);
+            border-color: #7eb4ea;
+        }
+        .mspaint-shape-btn.active {
+            background: linear-gradient(180deg, #cce4f7 0%, #9bd0f5 100%);
+            border-color: #2b7cd3;
+            box-shadow: inset 0 0 2px rgba(29, 78, 216, 0.25);
+        }
+        .mspaint-shape-btn svg {
+            width: 17px;
+            height: 15px;
+            overflow: visible;
+        }
+        .mspaint-scroll-strip {
+            width: 15px;
+            background: #f8fafc;
+            border-left: 1px solid #d0dceb;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1px 0;
+        }
+        .mspaint-scroll-arrow {
+            width: 100%;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 9px;
+            cursor: pointer;
+        }
+        .mspaint-scroll-arrow:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        /* ตารางสี 10 คอลัมน์ x 3 แถว เหมือน Windows Paint */
+        .mspaint-color-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 18px);
+            grid-template-rows: repeat(3, 18px);
+            gap: 2px;
+        }
+        .mspaint-swatch {
+            width: 18px;
+            height: 18px;
+            border: 1px solid #a0a0a0;
+            box-shadow: inset 0 0 0 1px #ffffff;
+            cursor: pointer;
+        }
+        .mspaint-swatch:hover {
+            border-color: #2b7cd3;
+            transform: scale(1.1);
+        }
+        .mspaint-color-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3px 5px;
+            height: 62px;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .mspaint-color-slot.active {
+            background: #cce4f7;
+            border-color: #62a2e4;
+        }
         /* แถบเลื่อนซ้าย-ขวาสไตล์ Windows Paint ด้านล่างกระดาน */
         .paint-h-slider {
             -webkit-appearance: none;
@@ -75,10 +260,9 @@
             width: 64px;
             height: 12px;
             border-radius: 999px;
-            background: linear-gradient(90deg, #3b82f6, #2563eb);
-            border: 1px solid #1e40af;
+            background: linear-gradient(90deg, #94a3b8, #64748b);
+            border: 1px solid #475569;
             cursor: ew-resize;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
         }
         .paint-h-slider:disabled::-webkit-slider-thumb {
             background: #cbd5e1;
@@ -90,176 +274,399 @@
         }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col bg-amber-50 text-slate-800">
+<body class="h-screen w-screen flex flex-col bg-[#cbd5e1] text-slate-800">
 
-    <!-- 1. TOP HEADER: แถบสถานะเกมฝึกซ้อมแข่งขันศิลปหัตถกรรม + จับเวลา + ส่งกรรมการตรวจ -->
-    <header class="bg-gradient-to-r from-indigo-700 via-blue-600 to-sky-500 px-2.5 py-1 flex items-center justify-between gap-1.5 shadow-xs z-20 shrink-0 border-b border-indigo-900">
-        <div class="flex items-center gap-1.5">
-            <div class="flex items-center gap-1.5 bg-white/95 px-2.5 py-0.5 rounded-xl border border-yellow-300">
-                <div class="w-5 h-5 rounded-lg bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white">
-                    <i class="fa-solid fa-trophy text-xs"></i>
-                </div>
-                <h1 class="font-cute font-bold text-xs sm:text-sm text-indigo-950">KidDraw พิชิตเหรียญทอง</h1>
-            </div>
-
-            <!-- สลับโหมดเกม: ฝึกทีละท่า vs สนามแข่งจริง 4 ช่อง -->
-            <div class="flex items-center bg-indigo-950/50 p-0.5 rounded-xl border border-indigo-400/40">
-                <button onclick="switchGameMode('single')" id="mode-single-btn" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition bg-amber-400 text-indigo-950">
-                    <i class="fa-solid fa-user"></i> ฝึกเดี่ยว 1 ท่า
+    <!-- 1. WINDOWS PAINT TITLE BAR & MENU TABS (รวมปุ่มบันทึก/ย้อนกลับมุมซ้ายบนแบบ Paint จริง + แถบฝึกซ้อมแข่งขันด้านขวา) -->
+    <header class="bg-white border-b border-slate-300 flex flex-wrap items-center justify-between px-2 py-0.5 text-xs z-30 shrink-0">
+        <!-- มุมซ้ายบน: Quick Access Toolbar & Menu Tabs (File / Home / View) เหมือนโปรแกรม Paint จริง -->
+        <div class="flex items-center gap-1">
+            <!-- ไอคอนโปรแกรม Paint + Save + Undo + Redo -->
+            <div class="flex items-center gap-1 pr-2 border-r border-slate-300">
+                <i class="fa-solid fa-palette text-sky-600 text-sm"></i>
+                <button onclick="downloadArtwork()" title="บันทึกผลงาน (Save)" class="w-6 h-6 rounded hover:bg-slate-200 flex items-center justify-center text-indigo-700">
+                    <i class="fa-solid fa-floppy-disk"></i>
                 </button>
-                <button onclick="switchGameMode('competition')" id="mode-comp-btn" class="px-2 py-0.5 rounded-lg text-[11px] font-bold transition text-white hover:bg-white/10">
-                    <i class="fa-solid fa-table-cells-large"></i> สนามแข่ง 4 ท่า
+                <button onclick="undoStroke()" id="btn-undo" title="ย้อนกลับ (Ctrl+Z)" class="w-6 h-6 rounded hover:bg-slate-200 flex items-center justify-center text-sky-700 disabled:opacity-35">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+                <button onclick="redoStroke()" id="btn-redo" title="ทำซ้ำ (Ctrl+Y)" class="w-6 h-6 rounded hover:bg-slate-200 flex items-center justify-center text-sky-700 disabled:opacity-35">
+                    <i class="fa-solid fa-rotate-right"></i>
                 </button>
             </div>
 
-            <!-- ป้ายหัวข้อโจทย์การแข่งขัน -->
-            <div class="hidden xl:flex items-center gap-1 bg-amber-100/95 px-2.5 py-0.5 rounded-xl border border-amber-300 text-[11px]">
-                <span class="font-bold text-amber-800"><i class="fa-solid fa-scroll"></i> โจทย์:</span>
-                <span id="mission-theme-title" class="font-bold text-indigo-950 truncate max-w-[180px]">กิจวัตรเด็กดี 4 อิริยาบถ</span>
-                <button onclick="randomizeCompetitionMission()" class="ml-1 text-indigo-600 hover:text-indigo-800 font-bold" title="สุ่มหัวข้อโจทย์แข่งขันใหม่">
+            <!-- แท็บ File / Home / View -->
+            <div class="flex items-center gap-0.5 text-[11px]">
+                <button onclick="openClearModal()" class="px-3 py-1 bg-[#1976d2] hover:bg-[#1565c0] text-white font-semibold rounded-t-xs" title="คลิกเพื่อเริ่มกระดานใหม่ (New / Clear)">
+                    File
+                </button>
+                <button class="px-3 py-1 bg-[#f5f6f7] border-t border-x border-slate-300 text-slate-900 font-semibold rounded-t-xs">
+                    Home
+                </button>
+                <button onclick="toggleGuideVisibility()" id="btn-toggle-guide" class="px-2.5 py-1 hover:bg-slate-100 text-slate-700 rounded-t-xs flex items-center gap-1" title="สลับเปิด/ปิดเส้นประต้นแบบ (View)">
+                    <span>View (เส้นประ)</span>
+                </button>
+            </div>
+
+            <span class="hidden lg:inline text-[11px] text-slate-500 pl-2 font-sans">Untitled - Paint (โหมดฝึกซ้อมศิลปหัตถกรรม)</span>
+        </div>
+
+        <!-- มุมขวาบน: ระบบควบคุมการฝึกซ้อมแข่งขันศิลปหัตถกรรม -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <!-- สลับโหมด 1 ท่า / สนามแข่ง 4 ท่า -->
+            <div class="flex items-center bg-slate-200 p-0.5 rounded-lg border border-slate-300">
+                <button onclick="switchGameMode('single')" id="mode-single-btn" class="px-2 py-0.5 rounded-md text-[11px] font-bold transition bg-white text-indigo-950 shadow-2xs">
+                    1 ท่า
+                </button>
+                <button onclick="switchGameMode('competition')" id="mode-comp-btn" class="px-2 py-0.5 rounded-md text-[11px] font-bold transition text-slate-700 hover:bg-white/60">
+                    สนามแข่ง 4 ท่า
+                </button>
+            </div>
+
+            <!-- ป้ายหัวข้อโจทย์ -->
+            <div class="hidden xl:flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-300 text-[11px]">
+                <span class="font-bold text-amber-800">โจทย์:</span>
+                <span id="mission-theme-title" class="font-bold text-indigo-950 truncate max-w-[155px]">กิจวัตรเด็กดี 4 อิริยาบถ</span>
+                <button onclick="randomizeCompetitionMission()" class="text-indigo-600 hover:text-indigo-800 font-bold" title="สุ่มหัวข้อโจทย์ใหม่">
                     <i class="fa-solid fa-shuffle"></i>
                 </button>
             </div>
-        </div>
 
-        <!-- นาฬิกาจับเวลา + เปอร์เซ็นต์ลากเส้น + ปุ่มส่งกรรมการตรวจ 100 คะแนน -->
-        <div class="flex items-center gap-1.5 flex-wrap">
-            <!-- นาฬิกาจับเวลาซ้อมแข่ง -->
-            <div class="flex items-center gap-1 bg-slate-900/90 text-white px-2 py-0.5 rounded-xl border border-amber-400 text-[11px]">
-                <i class="fa-solid fa-clock text-amber-400"></i>
+            <!-- นาฬิกาจับเวลา -->
+            <div class="flex items-center gap-1 bg-slate-800 text-white px-2 py-0.5 rounded-lg text-[11px]">
+                <i class="fa-regular fa-clock text-amber-300"></i>
                 <span id="timer-display" class="font-mono font-bold text-amber-300">00:00</span>
-                <button onclick="toggleTimer()" id="btn-timer-toggle" class="text-[10px] px-1 bg-emerald-600 hover:bg-emerald-500 rounded text-white" title="เริ่ม/หยุดเวลา">
+                <button onclick="toggleTimer()" id="btn-timer-toggle" class="px-1 bg-emerald-600 hover:bg-emerald-500 rounded text-[10px]">
                     <i id="timer-icon" class="fa-solid fa-play"></i>
                 </button>
-                <button onclick="resetTimer()" class="text-[10px] px-1 bg-slate-700 hover:bg-slate-600 rounded text-slate-200" title="รีเซ็ตเวลา">
+                <button onclick="resetTimer()" class="px-1 bg-slate-600 hover:bg-slate-500 rounded text-[10px]">
                     <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
 
-            <div class="flex items-center gap-1.5 bg-white/95 px-2 py-0.5 rounded-full border border-amber-300 text-xs">
-                <span class="font-bold text-amber-900 text-[10px] hidden md:inline">ความสำเร็จ:</span>
-                <div class="w-14 sm:w-20 h-2.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
-                    <div id="trace-progress-bar" class="h-full bg-gradient-to-r from-amber-400 via-lime-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
+            <!-- เปอร์เซ็นต์ลากเส้น -->
+            <div class="flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-300 text-[11px]">
+                <div class="w-12 h-2 bg-slate-300 rounded-full overflow-hidden">
+                    <div id="trace-progress-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
                 </div>
-                <span id="trace-progress-text" class="font-bold text-emerald-600 text-[11px] min-w-[28px] text-right">0%</span>
+                <span id="trace-progress-text" class="font-bold text-emerald-700 text-[10px]">0%</span>
             </div>
 
-            <button onclick="evaluateCompetitionScore()" class="kid-btn px-2.5 py-0.5 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-500 hover:to-yellow-400 border-amber-600 text-indigo-950 font-bold text-[11px] flex items-center gap-1 shadow-xs">
+            <!-- ปุ่มส่งกรรมการตรวจ -->
+            <button onclick="evaluateCompetitionScore()" class="px-2.5 py-0.5 rounded-lg bg-amber-400 hover:bg-amber-500 border border-amber-600 text-indigo-950 font-bold text-[11px] flex items-center gap-1 shadow-2xs">
                 <i class="fa-solid fa-medal text-rose-600"></i>
-                <span>ส่งกรรมการตรวจ (100 คะแนน)</span>
-            </button>
-            <button onclick="undoStroke()" id="btn-undo" title="ย้อนกลับ (Ctrl+Z)" class="kid-btn px-2 py-0.5 rounded-lg bg-amber-300 hover:bg-amber-400 border-amber-500 text-amber-950 font-bold disabled:opacity-40 text-[11px]">
-                <i class="fa-solid fa-rotate-left"></i>
-            </button>
-            <button onclick="redoStroke()" id="btn-redo" title="ทำซ้ำ (Ctrl+Y)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-slate-100 border-slate-300 text-slate-700 disabled:opacity-40 text-[11px]">
-                <i class="fa-solid fa-rotate-right"></i>
-            </button>
-            <button onclick="openClearModal()" title="ล้างกระดานวาดใหม่" class="kid-btn px-2 py-0.5 rounded-lg bg-rose-500 hover:bg-rose-600 border-rose-700 text-white font-bold text-[11px]">
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
-            <button onclick="downloadArtwork()" title="บันทึกรูปภาพผลงาน" class="kid-btn px-2 py-0.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 border-emerald-700 text-white font-bold text-[11px]">
-                <i class="fa-solid fa-floppy-disk"></i>
+                <span>ส่งตรวจ</span>
             </button>
         </div>
     </header>
 
-    <!-- 2. TOP RIBBON TOOLBAR: อุปกรณ์สไตล์ Windows Paint (เพิ่มรูปทรงเรขาคณิตสำหรับการแข่งจริง) -->
-    <section class="bg-slate-100 border-b border-slate-300 px-2 py-1 shadow-2xs z-10 shrink-0">
-        <div class="flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
-            
-            <!-- กลุ่มอุปกรณ์วาดภาพ + รูปทรงเรขาคณิต + ซูมจุดเดียว -->
-            <div class="flex items-center gap-1 bg-white px-1.5 py-0.5 rounded-xl border border-slate-300 flex-wrap">
-                <button onclick="selectTool('pen')" id="tool-pen" class="kid-btn tool-btn active flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="ดินสอตัดเส้น (กั้นถังเทสี)">
-                    <i class="fa-solid fa-pencil text-xs text-slate-800"></i>
-                    <span class="text-[11px] font-bold">ดินสอ</span>
-                </button>
+    <!-- 2. WINDOWS PAINT RIBBON TOOLBAR: จัดเรียงกรอบเครื่องมือตามตำแหน่งจริงของ MS Paint (Clipboard | Image | Tools | Brushes | Shapes | Size | Colors) -->
+    <section class="mspaint-ribbon z-20 shrink-0 relative">
+        <!-- SVG Gradient สำหรับไอคอนรูปทรงสไตล์ Windows Paint -->
+        <svg width="0" height="0" class="absolute">
+            <defs>
+                <linearGradient id="msShapeFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="100%" stop-color="#d4e6f9" />
+                </linearGradient>
+            </defs>
+        </svg>
 
-                <button onclick="selectTool('line')" id="tool-line" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="เส้นตรง (ลากเส้นตรงกั้นสีแบบ Paint)">
-                    <i class="fa-solid fa-slash text-xs text-indigo-700"></i>
-                    <span class="text-[11px] font-bold">เส้นตรง</span>
+        <!-- กลุ่มที่ 1: Clipboard (Paste / Cut / Copy) -->
+        <div class="mspaint-group">
+            <div class="mspaint-group-content">
+                <button type="button" onclick="pasteSelectionOrToast()" class="mspaint-tall-btn" title="วางชิ้นงานที่คัดลอกไว้ (Paste)">
+                    <i class="fa-regular fa-clipboard text-xl text-amber-700"></i>
+                    <span class="text-[11px] text-slate-700 mt-1">Paste</span>
                 </button>
+                <div class="flex flex-col gap-1 text-[11px] text-slate-600">
+                    <button type="button" onclick="openClearModal()" class="flex items-center gap-1.5 px-1.5 py-0.5 rounded hover:bg-blue-50 text-left" title="ล้างกระดานเริ่มใหม่">
+                        <i class="fa-solid fa-scissors text-slate-500 text-xs"></i>
+                        <span>Cut / ล้าง</span>
+                    </button>
+                    <button type="button" onclick="copyCanvasSelection()" class="flex items-center gap-1.5 px-1.5 py-0.5 rounded hover:bg-blue-50 text-left" title="คัดลอกพื้นที่ที่เลือก (Copy)">
+                        <i class="fa-regular fa-copy text-sky-600 text-xs"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+            <span class="mspaint-group-title">Clipboard</span>
+        </div>
 
-                <button onclick="selectTool('circle')" id="tool-circle" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="วงกลม/วงรี (ช่วยวาดหัวและตาให้กลมเป๊ะ)">
-                    <i class="fa-regular fa-circle text-xs text-emerald-700"></i>
-                    <span class="text-[11px] font-bold">วงกลม</span>
+        <!-- กลุ่มที่ 2: Image (Select / Pan / Flip) -->
+        <div class="mspaint-group">
+            <div class="mspaint-group-content">
+                <button type="button" onclick="selectTool('select')" id="tool-select" class="mspaint-tall-btn tool-btn" title="ตีกรอบสี่เหลี่ยมเส้นประเพื่อเลือกย้ายหรือย่อ/ขยายพื้นที่วาด (Select)">
+                    <div class="w-7 h-6 border-2 border-dashed border-sky-700 bg-sky-50/40 rounded-xs flex items-center justify-center">
+                        <i class="fa-solid fa-up-down-left-right text-[10px] text-sky-700"></i>
+                    </div>
+                    <span class="text-[11px] text-slate-700 mt-1">Select</span>
                 </button>
+                <div class="flex flex-col gap-0.5 text-[11px] text-slate-700">
+                    <button type="button" onclick="selectTool('pan')" id="tool-pan" class="tool-btn flex items-center gap-1.5 px-1.5 py-0.5 rounded hover:bg-blue-50 text-left" title="มือจับเลื่อนกระดานซ้าย-ขวา/ขึ้น-ลงเมื่อขยายภาพ">
+                        <i class="fa-regular fa-hand text-sky-700 text-xs w-3.5"></i>
+                        <span>เลื่อนกระดาน</span>
+                    </button>
+                    <button type="button" onclick="flipActiveOrCanvasHorizontal()" class="flex items-center gap-1.5 px-1.5 py-0.5 rounded hover:bg-blue-50 text-left" title="กลับด้านซ้าย-ขวา (Rotate / Flip Horizontal)">
+                        <i class="fa-solid fa-right-left text-sky-700 text-xs w-3.5"></i>
+                        <span>Rotate / กลับด้าน</span>
+                    </button>
+                </div>
+            </div>
+            <span class="mspaint-group-title">Image</span>
+        </div>
 
-                <button onclick="selectTool('rect')" id="tool-rect" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="สี่เหลี่ยม (ช่วยวาดตัวและสิ่งของ)">
-                    <i class="fa-regular fa-square text-xs text-orange-600"></i>
-                    <span class="text-[11px] font-bold">สี่เหลี่ยม</span>
-                </button>
+        <!-- กลุ่มที่ 3: Tools (ตาราง 6 อุปกรณ์หลัก 2 แถว x 3 คอลัมน์ เหมือนในภาพ Paint จริง) -->
+        <div class="mspaint-group">
+            <div class="mspaint-group-content">
+                <div class="mspaint-tools-grid">
+                    <!-- แถวบน: ดินสอ (Pencil), ถังเทสี (Fill with color), พิมพ์ข้อความ (Text A) -->
+                    <button type="button" onclick="selectTool('pen')" id="tool-pen" class="mspaint-icon-btn tool-btn active" title="ดินสอวาดเส้น (Pencil) - เส้นกั้นถังเทสี">
+                        <i class="fa-solid fa-pencil text-amber-600 text-sm"></i>
+                    </button>
+                    <button type="button" onclick="selectTool('fill')" id="tool-fill" class="mspaint-icon-btn tool-btn" title="ถังเทสี (Fill with color) - ถ้ารอยประขาดสีจะรั่ว!">
+                        <i class="fa-solid fa-fill-drip text-sky-600 text-sm"></i>
+                    </button>
+                    <button type="button" onclick="selectTool('text')" id="tool-text" class="mspaint-icon-btn tool-btn" title="พิมพ์ข้อความ (Text A) - คลิกบนกระดานเพื่อพิมพ์ชื่อหรือป้ายข้อความ">
+                        <span class="font-serif font-extrabold text-base text-slate-800 leading-none">A</span>
+                    </button>
 
-                <button onclick="selectTool('fill')" id="tool-fill" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-amber-50" title="ถังเทสี (ถ้ารอยประขาดสีจะรั่ว!)">
-                    <i class="fa-solid fa-fill-drip text-xs text-amber-500"></i>
-                    <span class="text-[11px] font-bold">ถังเทสี</span>
-                </button>
+                    <!-- แถวล่าง: ยางลบ (Eraser), หลอดดูดสี (Color picker), แว่นขยาย (Magnifier) -->
+                    <button type="button" onclick="selectTool('eraser')" id="tool-eraser" class="mspaint-icon-btn tool-btn" title="ยางลบ (Eraser)">
+                        <i class="fa-solid fa-eraser text-pink-500 text-sm"></i>
+                    </button>
+                    <button type="button" onclick="selectTool('picker')" id="tool-picker" class="mspaint-icon-btn tool-btn" title="หลอดดูดสี (Color picker) - คลิกดูดสีจากบนกระดาน">
+                        <i class="fa-solid fa-eye-dropper text-teal-600 text-sm"></i>
+                    </button>
+                    <button type="button" onclick="selectTool('magnifier')" id="tool-magnifier" class="mspaint-icon-btn tool-btn" title="แว่นขยาย (Magnifier) - คลิกซ้ายบนกระดานเพื่อซูมเข้าตรงจุดที่ต้องการวาด">
+                        <i class="fa-solid fa-magnifying-glass text-indigo-700 text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <span class="mspaint-group-title">Tools</span>
+        </div>
 
-                <button onclick="selectTool('brush')" id="tool-brush" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-blue-50" title="พู่กันระบายสี">
-                    <i class="fa-solid fa-paintbrush text-xs text-blue-600"></i>
-                    <span class="text-[11px] font-bold">พู่กัน</span>
-                </button>
-
-                <button onclick="selectTool('crayon')" id="tool-crayon" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-pink-50" title="สีเทียน">
-                    <i class="fa-solid fa-highlighter text-xs text-pink-500"></i>
-                    <span class="text-[11px] font-bold">สีเทียน</span>
-                </button>
-
-                <button onclick="selectTool('eraser')" id="tool-eraser" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-rose-50" title="ยางลบ">
-                    <i class="fa-solid fa-eraser text-xs text-rose-500"></i>
-                    <span class="text-[11px] font-bold">ยางลบ</span>
-                </button>
-
-                <button onclick="selectTool('pan')" id="tool-pan" class="kid-btn tool-btn flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50" title="มือจับเลื่อนกระดานเมื่อซูม">
-                    <i class="fa-solid fa-hand text-xs text-indigo-600"></i>
-                    <span class="text-[11px] font-bold">เลื่อนดู</span>
-                </button>
-
-                <div class="h-5 w-px bg-slate-200 mx-0.5"></div>
-
-                <!-- จุดควบคุมการซูมเพียงจุดเดียว -->
-                <button onclick="changeZoom(-0.25)" class="kid-btn w-6 h-6 rounded-md bg-slate-100 hover:bg-indigo-100 border border-slate-300 text-slate-700 text-[10px] flex items-center justify-center" title="ซูมออก">
-                    <i class="fa-solid fa-magnifying-glass-minus"></i>
-                </button>
-                <button onclick="resetZoom()" id="zoom-level-label" class="px-1.5 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 font-bold text-[10px] min-w-[42px] text-center" title="คลิกเพื่อรีเซ็ตขนาด 100%">
-                    100%
-                </button>
-                <button onclick="changeZoom(0.25)" class="kid-btn w-6 h-6 rounded-md bg-slate-100 hover:bg-indigo-100 border border-slate-300 text-slate-700 text-[10px] flex items-center justify-center" title="ซูมเข้า">
-                    <i class="fa-solid fa-magnifying-glass-plus"></i>
-                </button>
-
-                <!-- ปุ่มซ่อน/แสดงเส้นประ เพื่อเช็กผลงานก่อนส่งกรรมการ -->
-                <button onclick="toggleGuideVisibility()" id="btn-toggle-guide" class="kid-btn px-2 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 font-bold text-[10px] flex items-center gap-1 ml-0.5" title="ซ่อน/แสดงเส้นประเพื่อเช็กเส้นจริงก่อนส่งกรรมการ">
-                    <i class="fa-solid fa-eye"></i>
-                    <span class="hidden lg:inline">เส้นประ</span>
+        <!-- กลุ่มที่ 4: Brushes (พู่กันและหัวแปรง 4 แบบเหมือน MS Paint) -->
+        <div class="mspaint-group relative">
+            <div class="mspaint-group-content">
+                <button type="button" onclick="toggleBrushMenu(event)" id="tool-brush-main" class="mspaint-tall-btn tool-btn" title="เลือกหัวแปรง Brushes (พู่กัน, ปากกาเมจิก, สีเทียน, สเปรย์)">
+                    <i class="fa-solid fa-paintbrush text-xl text-amber-700"></i>
+                    <span class="text-[11px] text-slate-700 mt-0.5 flex items-center gap-0.5">
+                        Brushes <i class="fa-solid fa-caret-down text-[9px]"></i>
+                    </span>
                 </button>
             </div>
+            <span class="mspaint-group-title">Brushes</span>
+        </div>
 
-            <!-- ขนาดเส้น -->
-            <div class="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-xl border border-slate-300">
-                <span class="text-[11px] font-bold text-slate-700">ขนาด:</span>
-                <input type="range" id="brush-size" min="2" max="36" value="6" oninput="updateBrushSize(this.value)" class="w-16 accent-blue-600 cursor-pointer">
-                <span id="brush-size-label" class="text-[10px] font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200 text-blue-700 min-w-[34px] text-center">6 px</span>
+        <!-- กลุ่มที่ 5: Shapes (ตารางรูปทรง 23 แบบ 7 คอลัมน์ + Outline + Fill เหมือนในภาพตัวอย่าง) -->
+        <div class="mspaint-group">
+            <div class="mspaint-group-content">
+                <div class="mspaint-shapes-frame" title="เลือกรูปทรงเรขาคณิต (ลากย่อ/ขยายและย้ายตำแหน่งได้เหมือน MS Paint)">
+                    <div id="mspaint-shapes-grid" class="mspaint-shapes-grid">
+                        <!-- แถวที่ 1 (7 รูปทรง) -->
+                        <button type="button" onclick="selectTool('line')" id="tool-line" class="mspaint-shape-btn tool-btn" title="เส้นตรง (Line)">
+                            <svg viewBox="0 0 20 18"><line x1="2" y1="2" x2="18" y2="16" stroke="#285999" stroke-width="1.6" stroke-linecap="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('curve')" id="tool-curve" class="mspaint-shape-btn tool-btn" title="เส้นโค้งดัดได้ (Curve)">
+                            <svg viewBox="0 0 20 18"><path d="M2,15 C6,1 14,17 18,3" fill="none" stroke="#285999" stroke-width="1.6" stroke-linecap="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('circle')" id="tool-circle" class="mspaint-shape-btn tool-btn" title="วงรี / วงกลม (Oval)">
+                            <svg viewBox="0 0 20 18"><ellipse cx="10" cy="9" rx="8" ry="6" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('rect')" id="tool-rect" class="mspaint-shape-btn tool-btn" title="สี่เหลี่ยมผืนผ้า (Rectangle)">
+                            <svg viewBox="0 0 20 18"><rect x="2" y="3" width="16" height="12" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('roundrect')" id="tool-roundrect" class="mspaint-shape-btn tool-btn" title="สี่เหลี่ยมมุมมน (Rounded Rectangle)">
+                            <svg viewBox="0 0 20 18"><rect x="2" y="3" width="16" height="12" rx="3.5" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('polygon')" id="tool-polygon" class="mspaint-shape-btn tool-btn" title="รูปหลายเหลี่ยม (Polygon)">
+                            <svg viewBox="0 0 20 18"><polygon points="5,3 13,3 11,10 18,10 18,15 2,15" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('triangle')" id="tool-triangle" class="mspaint-shape-btn tool-btn" title="สามเหลี่ยม (Triangle)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,2 18,16 2,16" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+
+                        <!-- แถวที่ 2 (7 รูปทรง) -->
+                        <button type="button" onclick="selectTool('right_triangle')" id="tool-right_triangle" class="mspaint-shape-btn tool-btn" title="สามเหลี่ยมมุมฉาก (Right Triangle)">
+                            <svg viewBox="0 0 20 18"><polygon points="2,2 18,16 2,16" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('diamond')" id="tool-diamond" class="mspaint-shape-btn tool-btn" title="สี่เหลี่ยมข้าวหลามตัด (Diamond)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,2 18,9 10,16 2,9" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('pentagon')" id="tool-pentagon" class="mspaint-shape-btn tool-btn" title="ห้าเหลี่ยม (Pentagon)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,2 18,8 15,16 5,16 2,8" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('hexagon')" id="tool-hexagon" class="mspaint-shape-btn tool-btn" title="หกเหลี่ยม (Hexagon)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,2 17,5.5 17,12.5 10,16 3,12.5 3,5.5" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('arrow_right')" id="tool-arrow_right" class="mspaint-shape-btn tool-btn" title="ลูกศรชี้ขวา (Right Arrow)">
+                            <svg viewBox="0 0 20 18"><polygon points="2,6 11,6 11,2 18,9 11,16 11,12 2,12" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('arrow_left')" id="tool-arrow_left" class="mspaint-shape-btn tool-btn" title="ลูกศรชี้ซ้าย (Left Arrow)">
+                            <svg viewBox="0 0 20 18"><polygon points="18,6 9,6 9,2 2,9 9,16 9,12 18,12" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('arrow_up')" id="tool-arrow_up" class="mspaint-shape-btn tool-btn" title="ลูกศรชี้ขึ้น (Up Arrow)">
+                            <svg viewBox="0 0 20 18"><polygon points="6,16 6,8 2,8 10,2 18,8 14,8 14,16" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+
+                        <!-- แถวที่ 3 (7 รูปทรง) -->
+                        <button type="button" onclick="selectTool('arrow_down')" id="tool-arrow_down" class="mspaint-shape-btn tool-btn" title="ลูกศรชี้ลง (Down Arrow)">
+                            <svg viewBox="0 0 20 18"><polygon points="6,2 6,10 2,10 10,16 18,10 14,10 14,2" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('star_4')" id="tool-star_4" class="mspaint-shape-btn tool-btn" title="ดาว 4 แฉก (Four-point Star)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,1 12.5,6.5 18,9 12.5,11.5 10,17 7.5,11.5 2,9 7.5,6.5" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('star_5')" id="tool-star_5" class="mspaint-shape-btn tool-btn" title="ดาว 5 แฉก (Five-point Star)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,1.5 12.3,6.5 18,7.2 13.8,11 15,16.5 10,13.6 5,16.5 6.2,11 2,7.2 7.7,6.5" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('star_6')" id="tool-star_6" class="mspaint-shape-btn tool-btn" title="ดาว 6 แฉก (Six-point Star)">
+                            <svg viewBox="0 0 20 18"><polygon points="10,1 12.5,5 17,5 14.5,9 17,13 12.5,13 10,17 7.5,13 3,13 5.5,9 3,5 7.5,5" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('callout_roundrect')" id="tool-callout_roundrect" class="mspaint-shape-btn tool-btn" title="กรอบคำพูดสี่เหลี่ยมมุมมน">
+                            <svg viewBox="0 0 20 18"><path d="M4,2 H16 A2,2 0 0 1 18,4 V11 A2,2 0 0 1 16,13 H9 L5,16.5 V13 H4 A2,2 0 0 1 2,11 V4 A2,2 0 0 1 4,2 Z" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('callout_oval')" id="tool-callout_oval" class="mspaint-shape-btn tool-btn" title="กรอบคำพูดวงรี">
+                            <svg viewBox="0 0 20 18"><path d="M10,2 C14.5,2 18,4.8 18,8 C18,11.2 14.5,13.8 10,13.8 C8.8,13.8 7.7,13.6 6.7,13.3 L3.5,16.5 L4.5,12.2 C3,11.1 2,9.6 2,8 C2,4.8 5.5,2 10,2 Z" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('callout_cloud')" id="tool-callout_cloud" class="mspaint-shape-btn tool-btn" title="กรอบความคิดก้อนเมฆ">
+                            <svg viewBox="0 0 20 18"><path d="M6,12.5 C3.8,12.5 2.2,11 2.2,9.2 C2.2,7.8 3.2,6.6 4.6,6.2 C5,4.1 7.1,2.5 9.8,2.5 C12.2,2.5 14.2,3.8 14.8,5.6 C16.6,5.9 18,7.3 18,9 C18,10.9 16.3,12.5 14.2,12.5 Z" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/><circle cx="4.5" cy="15.2" r="1.3" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.1"/></svg>
+                        </button>
+
+                        <!-- แถวที่ 4 (2 รูปทรง: หัวใจ & สายฟ้า) -->
+                        <button type="button" onclick="selectTool('heart')" id="tool-heart" class="mspaint-shape-btn tool-btn" title="รูปหัวใจ (Heart)">
+                            <svg viewBox="0 0 20 18"><path d="M10,16.2 C10,16.2 2.5,11.2 2.5,6.2 C2.5,3.6 4.5,2 6.7,2 C8.2,2 9.4,2.8 10,4 C10.6,2.8 11.8,2 13.3,2 C15.5,2 17.5,3.6 17.5,6.2 C17.5,11.2 10,16.2 10,16.2 Z" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                        <button type="button" onclick="selectTool('lightning')" id="tool-lightning" class="mspaint-shape-btn tool-btn" title="รูปสายฟ้า (Lightning)">
+                            <svg viewBox="0 0 20 18"><polygon points="8,1.5 15.5,1.5 11.2,7 16,7 6,16.8 9,10 4.5,10" fill="url(#msShapeFill)" stroke="#285999" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        </button>
+                    </div>
+                    <!-- แถบลูกศรขึ้น/ลง ด้านขวากรอบเหมือน Windows Paint -->
+                    <div class="mspaint-scroll-strip">
+                        <button type="button" onclick="scrollShapesGallery(-1)" class="mspaint-scroll-arrow" title="เลื่อนขึ้น">
+                            <i class="fa-solid fa-caret-up"></i>
+                        </button>
+                        <button type="button" onclick="scrollShapesGallery(1)" class="mspaint-scroll-arrow" title="เลื่อนลง">
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ปุ่ม Outline และ Fill ด้านขวากรอบรูปทรงเหมือนในภาพตัวอย่าง -->
+                <div class="flex flex-col gap-1 text-[11px] text-slate-700">
+                    <div class="flex items-center gap-1 px-1.5 py-0.5 rounded border border-transparent hover:bg-blue-50 text-slate-700" title="เส้นขอบรูปทรง (ใช้สี Color 1)">
+                        <i class="fa-solid fa-pen-ruler text-amber-600 text-xs"></i>
+                        <span>Outline <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i></span>
+                    </div>
+                    <button type="button" onclick="toggleShapeFillMode()" id="btn-shape-fill" class="flex items-center gap-1 px-1.5 py-0.5 rounded border border-transparent hover:bg-blue-50 text-slate-700 transition" title="คลิกเพื่อเปิด/ปิดการเติมสีพื้นในรูปทรง (ใช้สี Color 2 หรือ Color 1)">
+                        <i class="fa-solid fa-fill-drip text-sky-600 text-xs"></i>
+                        <span id="shape-fill-label">Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i></span>
+                    </button>
+                </div>
             </div>
+            <span class="mspaint-group-title">Shapes</span>
+        </div>
 
-            <!-- ถาดสี (Colors) แถวเดียวกะทัดรัด -->
-            <div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-xl border border-slate-300">
-                <div id="active-color-box" class="w-6 h-6 rounded-md border-2 border-slate-700 shadow-inner shrink-0" style="background-color: #1e293b;" title="สีที่กำลังใช้"></div>
-                <div id="color-swatches" class="flex items-center gap-1 flex-wrap"></div>
-                <label class="flex items-center justify-center w-6 h-6 rounded-md border border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer shrink-0" title="ผสมสีเพิ่มเติม">
-                    <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-500 via-lime-400 to-blue-500 border border-slate-400"></span>
-                    <input type="color" id="custom-color-picker" value="#1e293b" onchange="selectColor(this.value)" class="opacity-0 w-0 h-0">
+        <!-- กลุ่มที่ 6: Size (ปุ่มเลือกขนาดความหนาของเส้น 4 ระดับ เหมือนในภาพตัวอย่าง) -->
+        <div class="mspaint-group">
+            <div class="mspaint-group-content">
+                <button type="button" onclick="toggleSizeMenu(event)" id="btn-size-dropdown" class="mspaint-tall-btn" title="เลือกขนาดความหนาของเส้น (Size)">
+                    <div class="w-8 flex flex-col gap-1 items-center justify-center py-0.5">
+                        <div class="w-full h-[1.5px] bg-sky-900"></div>
+                        <div class="w-full h-[2.5px] bg-sky-900"></div>
+                        <div class="w-full h-[4px] bg-sky-900"></div>
+                        <div class="w-full h-[6px] bg-sky-900"></div>
+                    </div>
+                    <span class="text-[11px] text-slate-700 mt-0.5 flex items-center gap-0.5">
+                        Size <i class="fa-solid fa-caret-down text-[9px]"></i>
+                    </span>
+                </button>
+            </div>
+            <span class="mspaint-group-title">Size (<span id="brush-size-label">6px</span>)</span>
+        </div>
+
+        <!-- กลุ่มที่ 7: Colors (Color 1 | Color 2 | ตารางสี 10x3 | Edit colors เหมือนในภาพตัวอย่าง) -->
+        <div class="mspaint-group border-r-0">
+            <div class="mspaint-group-content">
+                <!-- Color 1 (สีเส้น/สีหลัก) -->
+                <button type="button" onclick="setActiveColorSlot(1)" id="color-slot-1" class="mspaint-color-slot active" title="Color 1 (สีหลักสำหรับวาดเส้นและเทสี)">
+                    <div id="active-color-box" class="w-7 h-7 border border-slate-500 shadow-inner" style="background-color: #1e293b;"></div>
+                    <span class="text-[10px] text-slate-700 mt-1 leading-tight text-center">Color<br>1</span>
+                </button>
+
+                <!-- Color 2 (สีพื้นหลัง/สีเติมรูปทรง) -->
+                <button type="button" onclick="setActiveColorSlot(2)" id="color-slot-2" class="mspaint-color-slot" title="Color 2 (สีรองสำหรับเติมพื้นรูปทรง)">
+                    <div id="secondary-color-box" class="w-7 h-7 border border-slate-400 shadow-inner" style="background-color: #ffffff;"></div>
+                    <span class="text-[10px] text-slate-700 mt-1 leading-tight text-center">Color<br>2</span>
+                </button>
+
+                <!-- ตารางสี 10 คอลัมน์ x 3 แถว -->
+                <div id="color-swatches" class="mspaint-color-grid"></div>
+
+                <!-- ปุ่ม Edit colors (วงล้อสีรุ้ง) -->
+                <label class="mspaint-tall-btn cursor-pointer" title="ผสมสีเพิ่มเติม (Edit colors)">
+                    <div class="w-7 h-7 rounded-xs border border-slate-400 bg-gradient-to-br from-rose-500 via-lime-400 to-indigo-600 flex items-center justify-center shadow-2xs">
+                        <div class="w-3 h-3 rounded-full bg-white/40"></div>
+                    </div>
+                    <span class="text-[10px] text-slate-700 mt-1 leading-tight text-center">Edit<br>colors</span>
+                    <input type="color" id="custom-color-picker" value="#1e293b" onchange="selectColor(this.value)" class="opacity-0 w-0 h-0 absolute">
                 </label>
             </div>
-
+            <span class="mspaint-group-title">Colors</span>
         </div>
     </section>
 
+    <!-- เมนูดรอปดาวน์เลือกหัวแปรง (Brushes Dropdown) -->
+    <div id="brush-dropdown-menu" class="hidden fixed bg-white border border-slate-300 shadow-xl rounded-md p-1.5 z-50 w-44 text-xs">
+        <button type="button" onclick="selectTool('brush'); closePopups();" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded hover:bg-blue-50 text-left font-semibold">
+            <i class="fa-solid fa-paintbrush text-blue-600 w-4"></i>
+            <span>พู่กันระบายสี (Brush)</span>
+        </button>
+        <button type="button" onclick="selectTool('marker'); closePopups();" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded hover:bg-blue-50 text-left font-semibold">
+            <i class="fa-solid fa-pen-nib text-indigo-700 w-4"></i>
+            <span>ปากกาเมจิกตัดเส้น (Marker)</span>
+        </button>
+        <button type="button" onclick="selectTool('crayon'); closePopups();" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded hover:bg-blue-50 text-left font-semibold">
+            <i class="fa-solid fa-highlighter text-pink-500 w-4"></i>
+            <span>สีเทียน (Crayon)</span>
+        </button>
+        <button type="button" onclick="selectTool('airbrush'); closePopups();" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded hover:bg-blue-50 text-left font-semibold">
+            <i class="fa-solid fa-spray-can-sparkles text-sky-600 w-4"></i>
+            <span>สเปรย์พ่นสี (Airbrush)</span>
+        </button>
+    </div>
+
+    <!-- เมนูดรอปดาวน์เลือกความหนาของเส้น 4 ระดับเหมือน MS Paint (Size Dropdown) -->
+    <div id="size-dropdown-menu" class="hidden fixed bg-white border border-slate-300 shadow-xl rounded-md p-2 z-50 w-44">
+        <div class="flex flex-col gap-1">
+            <button type="button" onclick="updateBrushSize(2); closePopups();" class="w-full py-2 px-3 rounded hover:bg-blue-100 flex items-center justify-between">
+                <div class="w-24 h-[2px] bg-slate-900"></div>
+                <span class="text-[10px] font-bold text-slate-600">2 px</span>
+            </button>
+            <button type="button" onclick="updateBrushSize(5); closePopups();" class="w-full py-2 px-3 rounded hover:bg-blue-100 flex items-center justify-between">
+                <div class="w-24 h-[5px] bg-slate-900 rounded-full"></div>
+                <span class="text-[10px] font-bold text-slate-600">5 px</span>
+            </button>
+            <button type="button" onclick="updateBrushSize(8); closePopups();" class="w-full py-2 px-3 rounded hover:bg-blue-100 flex items-center justify-between">
+                <div class="w-24 h-[8px] bg-slate-900 rounded-full"></div>
+                <span class="text-[10px] font-bold text-slate-600">8 px</span>
+            </button>
+            <button type="button" onclick="updateBrushSize(14); closePopups();" class="w-full py-2 px-3 rounded hover:bg-blue-100 flex items-center justify-between">
+                <div class="w-24 h-[12px] bg-slate-900 rounded-full"></div>
+                <span class="text-[10px] font-bold text-slate-600">14 px</span>
+            </button>
+        </div>
+        <div class="mt-2 pt-2 border-t border-slate-200 flex items-center gap-2">
+            <span class="text-[10px] font-bold text-slate-500">ปรับละเอียด:</span>
+            <input type="range" id="brush-size" min="1" max="36" value="6" oninput="updateBrushSize(this.value)" class="w-20 accent-blue-600 cursor-pointer">
+        </div>
+    </div>
+
     <!-- 3. CENTER WORKSPACE: กระดานวาดภาพตรงกลาง ขยายเต็มพื้นที่ด้านข้าง พร้อมแถบเลื่อนซ้าย-ขวาด้านล่าง -->
     <div class="flex-1 flex overflow-hidden relative">
-        <main id="canvas-workspace" class="flex-1 flex flex-col items-center justify-center p-0.5 sm:p-1 gap-1 overflow-hidden relative bg-gradient-to-br from-amber-100/60 via-sky-100/50 to-pink-100/60">
+        <main id="canvas-workspace" class="flex-1 flex flex-col items-center justify-center p-1 gap-0.5 overflow-hidden relative bg-[#cbd5e1]">
             
-            <!-- กรอบกระดานวาดภาพ ขยายเต็มความกว้างด้านข้าง -->
-            <div id="board-container" class="relative canvas-board-bg rounded-t-xl rounded-b-md shadow-lg border-2 border-white ring-2 ring-amber-300 overflow-hidden flex items-center justify-center w-full h-full" style="width: 100%; height: 100%;">
+            <!-- กรอบกระดานวาดภาพสีขาวสไตล์ Windows Paint -->
+            <div id="board-container" class="relative canvas-board-bg shadow-md border border-slate-400 overflow-hidden flex items-center justify-center w-full h-full" style="width: 100%; height: 100%;">
                 
                 <!-- Viewport สำหรับซูมและเลื่อนกระดานวาดภาพทั้งหมดพร้อมกัน -->
                 <div id="zoom-viewport" class="relative w-full h-full origin-top-left" style="transform: translate(0px, 0px) scale(1);">
@@ -279,140 +686,121 @@
                     <canvas id="fx-canvas" width="1200" height="600" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
                 </div>
 
-                <!-- กรอบภาพต้นแบบมุมขวาบน (คลิกที่รูปเพื่อเปิดหน้าต่างขยายดูแบบได้ทันที จุดเดียวไม่เกะกะ) -->
-                <div id="mini-ref-card" class="absolute top-2 right-2 bg-white/95 p-1.5 rounded-xl shadow-md border border-sky-300 w-28 sm:w-36 z-10">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-[10px] font-bold text-sky-800 flex items-center gap-1 truncate">
-                            <i class="fa-solid fa-image text-sky-500"></i> ภาพต้นแบบ
+                <!-- กล่องพิมพ์ข้อความบนกระดานเมื่อใช้เครื่องมือ Text (A) -->
+                <div id="canvas-text-Overlay" class="hidden absolute z-30 bg-white/90 border-2 border-dashed border-blue-600 p-1 rounded shadow-md">
+                    <div class="flex items-center gap-1">
+                        <input type="text" id="canvas-text-input" placeholder="พิมพ์ข้อความ..." class="px-2 py-0.5 text-sm font-bold outline-none bg-transparent min-w-[140px]">
+                        <button type="button" onclick="commitTextTool()" class="px-2 py-0.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded">วาง</button>
+                        <button type="button" onclick="cancelTextTool()" class="px-1.5 py-0.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded">✕</button>
+                    </div>
+                </div>
+
+                <!-- แถบปุ่มช่วยยืนยัน/ยกเลิกรูปทรงที่กำลังดัดขนาดหรือเลื่อนตำแหน่ง (สไตล์ Windows Paint) -->
+                <div id="shape-transform-bar" class="hidden absolute top-2 left-1/2 -translate-x-1/2 bg-indigo-950/90 text-white px-3 py-1 rounded-full shadow-lg border border-sky-400 items-center gap-2 z-20 text-[11px]">
+                    <span class="font-bold text-sky-200"><i class="fa-solid fa-arrows-up-down-left-right"></i> ลากย้ายหรือดึงจุดสีขาวเพื่อปรับขนาด</span>
+                    <button onclick="commitActiveShape()" class="px-2 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold">
+                        <i class="fa-solid fa-check"></i> วางรูปทรง
+                    </button>
+                    <button onclick="cancelActiveShape()" class="px-2 py-0.5 rounded-full bg-rose-500 hover:bg-rose-400 text-white font-bold">
+                        <i class="fa-solid fa-xmark"></i> ยกเลิก
+                    </button>
+                </div>
+
+                <!-- กรอบภาพสีต้นแบบ (มุมขวาบนของกระดาน คลิกที่รูปเพื่อขยายดูแบบชัดๆ ได้ทันที) -->
+                <div id="mini-ref-card" class="absolute top-2 right-2 bg-white/95 backdrop-blur-xs rounded-xl shadow-md border border-slate-300 p-1.5 w-28 sm:w-36 z-10">
+                    <div class="flex items-center justify-between px-1 mb-0.5">
+                        <span class="text-[10px] font-bold text-slate-700 flex items-center gap-1">
+                            <i class="fa-solid fa-image text-sky-600"></i> ภาพต้นแบบ
                         </span>
-                        <button onclick="toggleMiniRef()" class="text-slate-400 hover:text-slate-600 text-[10px] px-1" title="พับเก็บ/แสดง">
+                        <button onclick="toggleMiniRef()" class="text-[10px] text-slate-400 hover:text-slate-700 px-1" title="พับเก็บ/แสดง">
                             <i id="mini-ref-icon" class="fa-solid fa-chevron-up"></i>
                         </button>
                     </div>
                     <div id="mini-ref-body">
-                        <div class="relative overflow-hidden rounded-lg bg-sky-50 border border-sky-200 group cursor-pointer" onclick="openRefZoomModal()" title="คลิกเพื่อขยายดูภาพต้นแบบ">
-                            <canvas id="mini-ref-canvas" width="360" height="180" class="w-full h-auto block"></canvas>
-                            <div class="absolute bottom-1 right-1 bg-slate-900/65 text-white text-[9px] px-1.5 py-0.5 rounded opacity-85 group-hover:opacity-100">
-                                <i class="fa-solid fa-magnifying-glass-plus"></i> ขยาย
-                            </div>
-                        </div>
-                        <p id="mini-pose-title" class="text-[10px] font-bold text-center text-indigo-800 mt-0.5 truncate">เด็กชาย: 1. การเดิน</p>
+                        <canvas id="mini-ref-canvas" width="240" height="180" onclick="openRefZoomModal()" title="คลิกเพื่อขยายดูภาพต้นแบบขนาดใหญ่" class="w-full h-auto rounded-lg bg-sky-50/60 border border-slate-200 cursor-zoom-in hover:border-sky-400 transition"></canvas>
+                        <p id="mini-pose-title" class="text-[9px] text-center font-bold text-slate-600 mt-0.5 truncate">เด็กชาย: 1. การเดิน</p>
                     </div>
                 </div>
             </div>
 
-            <!-- แถบเลื่อนซ้าย-ขวา (Horizontal Scrollbar) ด้านล่างกระดานวาดภาพ -->
-            <div id="h-scrollbar-bar" class="w-full h-7 bg-slate-100/95 rounded-lg border border-slate-300 px-2 flex items-center gap-2 shadow-2xs shrink-0">
-                <button onclick="nudgeHorizontalScroll(-1)" id="btn-scroll-left" class="w-6 h-5 rounded bg-white hover:bg-blue-50 border border-slate-300 text-slate-700 flex items-center justify-center text-[10px] disabled:opacity-40" title="เลื่อนไปทางซ้าย">
+            <!-- แถบเลื่อนซ้าย-ขวา (Horizontal Scrollbar) ด้านล่างกระดานวาดภาพ เหมือน Windows Paint -->
+            <div id="h-scrollbar-bar" class="w-full h-5 bg-[#f1f5f9] border-x border-b border-slate-300 px-1 flex items-center gap-1 shrink-0">
+                <button onclick="nudgeHorizontalScroll(-1)" id="btn-scroll-left" class="w-5 h-4 bg-white hover:bg-slate-200 border border-slate-300 text-slate-700 flex items-center justify-center text-[9px] disabled:opacity-40" title="เลื่อนไปทางซ้าย">
                     <i class="fa-solid fa-caret-left"></i>
                 </button>
                 <input type="range" id="h-scroll-slider" min="0" max="1000" value="0" disabled oninput="onHorizontalSliderInput(this.value)" class="paint-h-slider flex-1">
-                <button onclick="nudgeHorizontalScroll(1)" id="btn-scroll-right" class="w-6 h-5 rounded bg-white hover:bg-blue-50 border border-slate-300 text-slate-700 flex items-center justify-center text-[10px] disabled:opacity-40" title="เลื่อนไปทางขวา">
+                <button onclick="nudgeHorizontalScroll(1)" id="btn-scroll-right" class="w-5 h-4 bg-white hover:bg-slate-200 border border-slate-300 text-slate-700 flex items-center justify-center text-[9px] disabled:opacity-40" title="เลื่อนไปทางขวา">
                     <i class="fa-solid fa-caret-right"></i>
                 </button>
-                <span id="h-scroll-status" class="text-[10px] font-bold text-slate-500 hidden sm:inline min-w-[95px] text-right">ขยายภาพเพื่อเลื่อน</span>
             </div>
 
         </main>
     </div>
 
-    <!-- 4. BOTTOM DOCK: แถบเลือกตัวละคร ท่าทาง และปุ่มลัดซูมช่อง 4 อิริยาบถในโหมดแข่งขัน -->
-    <footer class="bg-gradient-to-r from-amber-100 via-pink-50 to-sky-100 border-t-2 border-amber-300 px-2.5 py-1 shadow-inner z-20 shrink-0">
-        <div class="flex flex-wrap items-center justify-center sm:justify-between gap-1.5">
+    <!-- 4. BOTTOM STATUS BAR & POSE DOCK: แถบสถานะล่างสุดเหมือน Windows Paint (ซ้าย: พิกัดเมาส์ | กลาง: เลือกตัวละคร/ท่าทาง | ขวา: แถบซูม 100% - +) -->
+    <footer class="bg-[#f0f0f0] border-t border-slate-300 px-2 py-0.5 z-20 shrink-0">
+        <div class="flex flex-wrap items-center justify-between gap-1.5">
             
-            <!-- ส่วนที่ 1: ตัวละคร ชาย/หญิง + ปุ่มสุ่มลุค + สุ่มโจทย์ -->
-            <div class="flex items-center gap-1">
-                <button onclick="selectCharacter('boy')" id="char-boy" class="kid-btn char-card active flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs font-bold">
-                    <span>👦</span>
-                    <span>เด็กชาย</span>
-                </button>
+            <!-- ซ้ายสุด: พิกัดเมาส์และขนาดกระดานเหมือนมุมซ้ายล่างของ Windows Paint + ปุ่มเลือกตัวละคร -->
+            <div class="flex items-center gap-2">
+                <div class="hidden xl:flex items-center gap-3 text-[11px] text-slate-600 font-sans pr-2 border-r border-slate-300">
+                    <span class="flex items-center gap-1 min-w-[82px]">
+                        <i class="fa-solid fa-arrows-up-down-left-right text-slate-400"></i>
+                        <span id="status-cursor-pos">0, 0px</span>
+                    </span>
+                    <span class="flex items-center gap-1 border-l border-slate-300 pl-2">
+                        <i class="fa-regular fa-square text-slate-400"></i>
+                        <span>1200 x 600px</span>
+                    </span>
+                </div>
 
-                <button onclick="selectCharacter('girl')" id="char-girl" class="kid-btn char-card flex items-center gap-1 px-2.5 py-1 rounded-xl border border-slate-300 bg-white text-slate-800 text-xs font-bold">
-                    <span>👧</span>
-                    <span>เด็กหญิง</span>
-                </button>
-
-                <button onclick="randomizeCharacterStyle()" class="kid-btn px-2.5 py-1 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 border-indigo-800 text-white font-bold text-xs flex items-center gap-1" title="สุ่มหน้าตา ทรงผม ลายเสื้อผ้า และสีสันใหม่">
-                    <i class="fa-solid fa-dice text-yellow-300"></i>
-                    <span>สุ่มคาแรคเตอร์</span>
-                </button>
-
-                <button onclick="randomizeCompetitionMission()" class="kid-btn px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border-orange-700 text-white font-bold text-xs flex items-center gap-1" title="สุ่มโจทย์หัวข้อแข่งขันศิลปหัตถกรรม">
-                    <i class="fa-solid fa-trophy text-yellow-200"></i>
-                    <span>สุ่มโจทย์แข่ง</span>
-                </button>
+                <!-- ปุ่มเลือกตัวละคร ชาย/หญิง + สุ่มคาแรคเตอร์ -->
+                <div class="flex items-center gap-1">
+                    <button onclick="selectCharacter('boy')" id="char-boy" class="kid-btn char-card active flex items-center gap-1 px-2 py-0.5 rounded-lg border border-slate-300 bg-white text-slate-800 text-[11px] font-bold">
+                        <span>👦 ชาย</span>
+                    </button>
+                    <button onclick="selectCharacter('girl')" id="char-girl" class="kid-btn char-card flex items-center gap-1 px-2 py-0.5 rounded-lg border border-slate-300 bg-white text-slate-800 text-[11px] font-bold">
+                        <span>👧 หญิง</span>
+                    </button>
+                    <button onclick="randomizeCharacterStyle()" class="kid-btn px-2 py-0.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 border-indigo-800 text-white font-bold text-[11px] flex items-center gap-1" title="สุ่มหน้าตา ทรงผม ลายเสื้อผ้า และสีสันใหม่">
+                        <i class="fa-solid fa-dice text-yellow-300"></i>
+                        <span>สุ่มแบบ</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- ส่วนที่ 2: เลือกท่าทาง (โหมดฝึกเดี่ยว) หรือ ปุ่มซูมโฟกัสช่อง 1-4 (โหมดสนามแข่ง 4 ท่า) -->
+            <!-- ตรงกลาง: เลือกท่าทาง 1-10 (โหมดฝึกเดี่ยว) หรือ ปุ่มซูมโฟกัสช่อง 1-4 (โหมดสนามแข่ง 4 ท่า) -->
             <div id="single-pose-bar" class="flex items-center gap-1 overflow-x-auto max-w-full py-0.5">
-                <button onclick="selectPose('walk')" id="pose-walk" class="kid-btn pose-card active flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-person-walking text-emerald-600"></i>
-                    <span>1. เดิน</span>
-                </button>
-
-                <button onclick="selectPose('sit')" id="pose-sit" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-chair text-blue-600"></i>
-                    <span>2. นั่ง</span>
-                </button>
-
-                <button onclick="selectPose('sleep')" id="pose-sleep" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-bed text-indigo-600"></i>
-                    <span>3. นอน</span>
-                </button>
-
-                <button onclick="selectPose('cook')" id="pose-cook" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-utensils text-orange-600"></i>
-                    <span>4. ทำกับข้าว</span>
-                </button>
-
-                <button onclick="selectPose('sport')" id="pose-sport" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-futbol text-rose-600"></i>
-                    <span>5. เล่นกีฬา</span>
-                </button>
-
-                <button onclick="selectPose('plant')" id="pose-plant" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-seedling text-lime-600"></i>
-                    <span>6. รดน้ำต้นไม้</span>
-                </button>
-
-                <button onclick="selectPose('paint')" id="pose-paint" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-palette text-purple-600"></i>
-                    <span>7. วาดรูป</span>
-                </button>
-
-                <button onclick="selectPose('happy')" id="pose-happy" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-face-laugh-beam text-amber-500"></i>
-                    <span>8. กระโดดดีใจ</span>
-                </button>
-
-                <button onclick="selectPose('cry')" id="pose-cry" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-face-sad-tear text-sky-600"></i>
-                    <span>9. ร้องไห้</span>
-                </button>
-
-                <button onclick="selectPose('science')" id="pose-science" class="kid-btn pose-card flex items-center gap-1 px-2 py-1 rounded-xl border border-slate-200 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">
-                    <i class="fa-solid fa-magnifying-glass text-teal-600"></i>
-                    <span>10. สำรวจโลก</span>
-                </button>
+                <button onclick="selectPose('walk')" id="pose-walk" class="kid-btn pose-card active px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">1. เดิน</button>
+                <button onclick="selectPose('sit')" id="pose-sit" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">2. นั่ง</button>
+                <button onclick="selectPose('sleep')" id="pose-sleep" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">3. นอน</button>
+                <button onclick="selectPose('cook')" id="pose-cook" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">4. ทำกับข้าว</button>
+                <button onclick="selectPose('sport')" id="pose-sport" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">5. กีฬา</button>
+                <button onclick="selectPose('plant')" id="pose-plant" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">6. รดน้ำ</button>
+                <button onclick="selectPose('paint')" id="pose-paint" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">7. วาดรูป</button>
+                <button onclick="selectPose('happy')" id="pose-happy" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">8. ดีใจ</button>
+                <button onclick="selectPose('cry')" id="pose-cry" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">9. ร้องไห้</button>
+                <button onclick="selectPose('science')" id="pose-science" class="kid-btn pose-card px-2 py-0.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 text-[11px] font-bold shrink-0">10. สำรวจ</button>
             </div>
 
             <!-- แถบปุ่มลัดซูมช่องที่ 1-4 สำหรับโหมดสนามแข่ง 4 ช่อง -->
             <div id="comp-quadrant-bar" class="hidden items-center gap-1 overflow-x-auto">
-                <span class="text-[11px] font-bold text-indigo-900 mr-1"><i class="fa-solid fa-magnifying-glass"></i> ซูมช่อง:</span>
-                <button onclick="focusQuadrant(0)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
-                    ช่อง 1 (บนซ้าย)
+                <button onclick="focusQuadrant(0)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-[11px] font-bold">ช่อง 1</button>
+                <button onclick="focusQuadrant(1)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-[11px] font-bold">ช่อง 2</button>
+                <button onclick="focusQuadrant(2)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-[11px] font-bold">ช่อง 3</button>
+                <button onclick="focusQuadrant(3)" class="kid-btn px-2 py-0.5 rounded-lg bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-[11px] font-bold">ช่อง 4</button>
+                <button onclick="resetZoom()" class="kid-btn px-2 py-0.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold">ดูครบ 4 ช่อง</button>
+            </div>
+
+            <!-- มุมขวาล่าง: แถบควบคุมการย่อ/ขยาย (Zoom Slider) เหมือนมุมขวาล่างของ Windows Paint จริง -->
+            <div class="flex items-center gap-1.5 pl-2 border-l border-slate-300 text-xs font-sans">
+                <button onclick="resetZoom()" id="zoom-level-label" class="text-[11px] text-slate-700 hover:text-blue-700 font-semibold min-w-[36px] text-right" title="คลิกเพื่อรีเซ็ต 100%">100%</button>
+                <button onclick="changeZoom(-0.25)" class="w-5 h-5 rounded-full hover:bg-slate-200 border border-slate-400 text-slate-700 flex items-center justify-center text-[10px]" title="ย่อภาพ (Zoom Out)">
+                    <i class="fa-solid fa-minus"></i>
                 </button>
-                <button onclick="focusQuadrant(1)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
-                    ช่อง 2 (บนขวา)
-                </button>
-                <button onclick="focusQuadrant(2)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
-                    ช่อง 3 (ล่างซ้าย)
-                </button>
-                <button onclick="focusQuadrant(3)" class="kid-btn px-2 py-1 rounded-xl bg-white hover:bg-sky-50 border border-sky-300 text-sky-900 text-xs font-bold">
-                    ช่อง 4 (ล่างขวา)
-                </button>
-                <button onclick="resetZoom()" class="kid-btn px-2 py-1 rounded-xl bg-indigo-600 hover:bg-indigo-700 border border-indigo-800 text-white text-xs font-bold">
-                    ดูครบ 4 ช่อง
+                <input type="range" id="status-zoom-slider" min="100" max="400" step="25" value="100" oninput="setZoomFromSlider(this.value)" class="w-20 accent-blue-600 cursor-pointer h-1.5">
+                <button onclick="changeZoom(0.25)" class="w-5 h-5 rounded-full hover:bg-slate-200 border border-slate-400 text-slate-700 flex items-center justify-center text-[10px]" title="ขยายภาพ (Zoom In)">
+                    <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
 
@@ -495,16 +883,25 @@
             currentPose: 'walk',        // 'walk' | 'sit' | 'sleep' | 'cook' | 'sport'
             competitionPoses: ['walk', 'sit', 'cook', 'sport'], // 4 ท่าในโหมดสนามแข่ง
             missionIndex: 0,
-            currentStep: 'all',
-            tool: 'pen',                // 'pen' | 'line' | 'circle' | 'rect' | 'brush' | 'fill' | 'crayon' | 'eraser' | 'pan'
-            color: '#1e293b',
+            tool: 'pen',                // 'pen' | Shapes (23 ชนิด) | 'brush' | 'marker' | 'crayon' | 'airbrush' | 'fill' | 'text' | 'eraser' | 'picker' | 'magnifier' | 'select' | 'pan'
+            activeColorSlot: 1,         // 1 = Color 1 (สีหลัก), 2 = Color 2 (สีรอง)
+            color: '#1e293b',           // Color 1
+            color2: '#ffffff',          // Color 2
             brushSize: 6,
+            shapeFill: false,           // เปิด/ปิดการระบายสีทึบในรูปทรง (ปุ่ม Fill ข้างกรอบ Shapes)
             strictFillMode: true,
             guideVisible: true,
             dashStyle: 'standard',
             isDrawing: false,
             lastPoint: null,
             shapeStartPoint: null,      // จุดเริ่มต้นสำหรับเครื่องมือเส้นตรง/วงกลม/สี่เหลี่ยม
+            activeShape: null,          // รูปทรงที่กำลังแสดงกรอบเส้นประปรับขนาด/เลื่อนตำแหน่งแบบ MS Paint
+            shapeAction: null,          // 'creating' | 'move' | 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'p1' | 'p2'
+            shapeDragStart: null,       // พิกัดเมาส์เริ่มต้นตอนดึงกรอบหรือย้ายรูปทรง
+            shapeInitialSnapshot: null, // พิกัดรูปทรงก่อนเริ่มดึงย่อ/ขยายหรือย้าย
+            selectionBox: null,         // กรอบ Select สี่เหลี่ยมเส้นประ
+            copiedCanvasData: null,     // ข้อมูลภาพที่กด Copy ไว้
+            textPosition: null,         // พิกัดที่คลิกวางกล่องข้อความ Text (A)
             leakCount: 0,               // จำนวนครั้งที่เทสีรั่ว เพื่อนำมาคำนวณความประณีต
             // นาฬิกาจับเวลาฝึกซ้อม
             timerSeconds: 0,
@@ -627,9 +1024,9 @@
         const fxCanvas = document.getElementById('fx-canvas');
         const fxCtx = fxCanvas.getContext('2d');
         const miniRefCanvas = document.getElementById('mini-ref-canvas');
-        const miniRefCtx = miniRefCanvas.getContext('2d');
+        const miniRefCtx = miniRefCanvas ? miniRefCanvas.getContext('2d') : null;
         const largeRefCanvas = document.getElementById('large-ref-canvas');
-        const largeRefCtx = largeRefCanvas.getContext('2d');
+        const largeRefCtx = largeRefCanvas ? largeRefCanvas.getContext('2d') : null;
 
         // Canvas ลับสำหรับตรวจเปอร์เซ็นต์การลากเส้นทับรอยประ
         const hitCanvas = document.createElement('canvas');
@@ -637,23 +1034,41 @@
         hitCanvas.height = INTERNAL_HEIGHT;
         const hitCtx = hitCanvas.getContext('2d', { willReadFrequently: true });
 
-        // ชุดสีมาตรฐานสไตล์ Windows Paint และโทนสีสำหรับสุ่มตัวละคร
+        // ชุดสีมาตรฐาน 30 ช่อง (10 คอลัมน์ x 3 แถว) เรียงตามถาดสีของ Windows Paint จริง + สีผิวสำหรับการ์ตูน
         const PALETTE_COLORS = [
-            { name: 'ดำตัดเส้น', hex: '#1e293b' },
-            { name: 'น้ำตาลเข้ม', hex: '#78350f' },
-            { name: 'แดงสด', hex: '#ef4444' },
-            { name: 'ส้มสดใส', hex: '#f97316' },
-            { name: 'เหลืองทอง', hex: '#facc15' },
-            { name: 'เขียวใบไม้', hex: '#22c55e' },
-            { name: 'ฟ้าสดใส', hex: '#0ea5e9' },
-            { name: 'น้ำเงินเข้ม', hex: '#2563eb' },
-            { name: 'ม่วงพาสเทล', hex: '#a855f7' },
-            { name: 'ชมพูหวาน', hex: '#ec4899' },
-            { name: 'สีเนื้อสว่าง', hex: '#fde68a' },
-            { name: 'สีเนื้ออมชมพู', hex: '#fed7aa' },
+            // แถวที่ 1: สีเข้มมาตรฐาน Windows Paint
+            { name: 'ดำ (Black)', hex: '#000000' },
+            { name: 'เทาเข้ม (Gray 50%)', hex: '#7f7f7f' },
+            { name: 'แดงเลือดหมู (Dark Red)', hex: '#880015' },
+            { name: 'แดงสด (Red)', hex: '#ed1c24' },
+            { name: 'ส้ม (Orange)', hex: '#ff7f27' },
+            { name: 'เหลืองสด (Yellow)', hex: '#fff200' },
+            { name: 'เขียวสด (Green)', hex: '#22b14c' },
+            { name: 'ฟ้าเทอร์ควอยซ์ (Turquoise)', hex: '#00a2e8' },
+            { name: 'น้ำเงินคราม (Indigo)', hex: '#3f48cc' },
+            { name: 'ม่วงเข้ม (Purple)', hex: '#a349a4' },
+            // แถวที่ 2: สีอ่อนและพาสเทลตาม Windows Paint
+            { name: 'ขาว (White)', hex: '#ffffff' },
+            { name: 'เทาอ่อน (Gray 25%)', hex: '#c3c3c3' },
+            { name: 'น้ำตาล (Brown)', hex: '#b97a57' },
+            { name: 'ชมพู (Rose)', hex: '#ffaec9' },
+            { name: 'เหลืองทอง (Gold)', hex: '#ffc90e' },
+            { name: 'เหลืองครีม (Light Yellow)', hex: '#efe4b0' },
+            { name: 'เขียวอ่อน (Lime)', hex: '#b5e61d' },
+            { name: 'ฟ้าอ่อน (Light Turquoise)', hex: '#99d9ea' },
+            { name: 'ฟ้าอมเทา (Blue-Gray)', hex: '#7092be' },
+            { name: 'ม่วงลาเวนเดอร์ (Lavender)', hex: '#c8bfe7' },
+            // แถวที่ 3: โทนสีผิวและสีเสริมที่เด็กใช้บ่อยในการแข่งขันวาดการ์ตูน
+            { name: 'สีเนื้ออ่อน', hex: '#fde68a' },
+            { name: 'สีผิวอมชมพู', hex: '#fed7aa' },
             { name: 'สีผิวแทน', hex: '#d97706' },
-            { name: 'เทาอ่อน', hex: '#94a3b8' },
-            { name: 'ขาวสะอาด', hex: '#ffffff' }
+            { name: 'น้ำตาลเข้มทรงผม', hex: '#451a03' },
+            { name: 'ชมพูบานเย็น', hex: '#ec4899' },
+            { name: 'เขียวมิ้นต์', hex: '#10b981' },
+            { name: 'ฟ้าสดใส', hex: '#38bdf8' },
+            { name: 'น้ำเงินเข้ม', hex: '#1e3a8a' },
+            { name: 'ม่วงสดใส', hex: '#8b5cf6' },
+            { name: 'เทาอมฟ้า', hex: '#64748b' }
         ];
 
         const SKIN_TONES = ['#fde68a', '#fed7aa', '#fcd34d', '#f59e0b'];
@@ -2545,22 +2960,24 @@
             const midX = INTERNAL_WIDTH / 2;
             const midY = INTERNAL_HEIGHT / 2;
 
-            miniRefCtx.clearRect(0, 0, miniRefCanvas.width, miniRefCanvas.height);
-            miniRefCtx.save();
-            miniRefCtx.scale(miniRefCanvas.width / INTERNAL_WIDTH, miniRefCanvas.height / INTERNAL_HEIGHT);
-            renderScenePoseOrGrid(miniRefCtx, {
-                charKey: state.currentCharacter,
-                colorMode: true
-            });
-            if (state.gameMode === 'competition') {
-                miniRefCtx.strokeStyle = '#64748b';
-                miniRefCtx.lineWidth = 4;
-                miniRefCtx.beginPath();
-                miniRefCtx.moveTo(midX, 0); miniRefCtx.lineTo(midX, INTERNAL_HEIGHT);
-                miniRefCtx.moveTo(0, midY); miniRefCtx.lineTo(INTERNAL_WIDTH, midY);
-                miniRefCtx.stroke();
+            if (miniRefCtx && miniRefCanvas) {
+                miniRefCtx.clearRect(0, 0, miniRefCanvas.width, miniRefCanvas.height);
+                miniRefCtx.save();
+                miniRefCtx.scale(miniRefCanvas.width / INTERNAL_WIDTH, miniRefCanvas.height / INTERNAL_HEIGHT);
+                renderScenePoseOrGrid(miniRefCtx, {
+                    charKey: state.currentCharacter,
+                    colorMode: true
+                });
+                if (state.gameMode === 'competition') {
+                    miniRefCtx.strokeStyle = '#64748b';
+                    miniRefCtx.lineWidth = 4;
+                    miniRefCtx.beginPath();
+                    miniRefCtx.moveTo(midX, 0); miniRefCtx.lineTo(midX, INTERNAL_HEIGHT);
+                    miniRefCtx.moveTo(0, midY); miniRefCtx.lineTo(INTERNAL_WIDTH, midY);
+                    miniRefCtx.stroke();
+                }
+                miniRefCtx.restore();
             }
-            miniRefCtx.restore();
 
             // วาดลงใน Canvas ต้นแบบขนาดใหญ่สำหรับหน้าต่างซูมด้วย
             if (largeRefCtx) {
@@ -2618,11 +3035,21 @@
             clampPanPosition();
             viewport.style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
 
-            const pct = `${Math.round(state.zoom * 100)}%`;
+            const pctNum = Math.round(state.zoom * 100);
+            const pct = `${pctNum}%`;
             const topLabel = document.getElementById('zoom-level-label');
             if (topLabel) topLabel.textContent = pct;
 
+            const zoomSlider = document.getElementById('status-zoom-slider');
+            if (zoomSlider) zoomSlider.value = pctNum;
+
             syncHorizontalScrollbar();
+        }
+
+        function setZoomFromSlider(val) {
+            const targetZoom = parseInt(val, 10) / 100;
+            const delta = targetZoom - state.zoom;
+            changeZoom(delta);
         }
 
         // ซิงค์ตำแหน่งแถบเลื่อนซ้าย-ขวาด้านล่างให้ตรงกับตำแหน่งกระดานปัจจุบัน
@@ -2779,8 +3206,185 @@
         }
 
         /********************************************************************
-         * 5. ระบบวาดภาพ (ดินสอ + รูปทรงเรขาคณิตแบบ Paint + ถังเทสีฝึกสังเกต)
+         * 5. ระบบวาดภาพ (ดินสอ + รูปทรงเรขาคณิต 23 แบบ ปรับขนาด/เลื่อนได้แบบ MS Paint + ถังเทสี)
          ********************************************************************/
+        const SHAPE_TOOLS = [
+            'line', 'curve', 'circle', 'rect', 'roundrect', 'polygon', 'triangle',
+            'right_triangle', 'diamond', 'pentagon', 'hexagon', 'arrow_right', 'arrow_left', 'arrow_up',
+            'arrow_down', 'star_4', 'star_5', 'star_6', 'callout_roundrect', 'callout_oval', 'callout_cloud',
+            'heart', 'lightning'
+        ];
+
+        function isShapeTool(toolName) {
+            return SHAPE_TOOLS.includes(toolName);
+        }
+
+        function scrollShapesGallery(dir) {
+            const grid = document.getElementById('mspaint-shapes-grid');
+            if (!grid) return;
+            grid.scrollBy({ top: dir * 24, behavior: 'smooth' });
+        }
+
+        function toggleShapeFillMode() {
+            state.shapeFill = !state.shapeFill;
+            const btn = document.getElementById('btn-shape-fill');
+            const label = document.getElementById('shape-fill-label');
+            if (label) label.innerHTML = state.shapeFill ? 'Fill: เปิด <i class="fa-solid fa-caret-down text-[9px]"></i>' : 'Fill <i class="fa-solid fa-caret-down text-[9px] text-slate-400"></i>';
+            if (btn) {
+                btn.classList.toggle('bg-blue-100', state.shapeFill);
+                btn.classList.toggle('border-blue-400', state.shapeFill);
+            }
+            if (state.activeShape) {
+                state.activeShape.filled = state.shapeFill;
+                state.activeShape.fillColor = state.color2 !== '#ffffff' ? state.color2 : state.color;
+                renderActiveShapeOverlay();
+            }
+            showToast(state.shapeFill ? 'เปิดโหมดเติมสีพื้นในรูปทรง (Fill)' : 'วาดเฉพาะเส้นขอบรูปทรง (Outline)');
+        }
+
+        // เปิด/ปิดเมนูเลือกหัวแปรง (Brushes) และเมนูความหนาเส้น (Size)
+        function closePopups() {
+            const bMenu = document.getElementById('brush-dropdown-menu');
+            const sMenu = document.getElementById('size-dropdown-menu');
+            if (bMenu) bMenu.classList.add('hidden');
+            if (sMenu) sMenu.classList.add('hidden');
+        }
+
+        function toggleBrushMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('brush-dropdown-menu');
+            const sMenu = document.getElementById('size-dropdown-menu');
+            if (sMenu) sMenu.classList.add('hidden');
+            if (!menu) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            menu.style.left = `${rect.left}px`;
+            menu.style.top = `${rect.bottom + 2}px`;
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleSizeMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('size-dropdown-menu');
+            const bMenu = document.getElementById('brush-dropdown-menu');
+            if (bMenu) bMenu.classList.add('hidden');
+            if (!menu) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            menu.style.left = `${Math.max(8, rect.left - 40)}px`;
+            menu.style.top = `${rect.bottom + 2}px`;
+            menu.classList.toggle('hidden');
+        }
+
+        // ฟังก์ชันของกลุ่ม Clipboard / Image / Text / Eyedropper
+        function copyCanvasSelection() {
+            state.copiedCanvasData = {
+                draw: drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT),
+                color: colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT)
+            };
+            showToast('คัดลอกภาพบนกระดานไว้ใน Clipboard แล้ว!');
+        }
+
+        function pasteSelectionOrToast() {
+            if (!state.copiedCanvasData) {
+                showToast('กดปุ่ม Copy ก่อนเพื่อคัดลอกภาพมาวางครับ');
+                return;
+            }
+            saveHistorySnapshot();
+            drawCtx.putImageData(state.copiedCanvasData.draw, 0, 0);
+            colorCtx.putImageData(state.copiedCanvasData.color, 0, 0);
+            updateTraceProgress();
+            showToast('วางภาพจาก Clipboard เรียบร้อยแล้ว!');
+        }
+
+        function flipActiveOrCanvasHorizontal() {
+            if (state.activeShape) {
+                const tmp = state.activeShape.x1;
+                state.activeShape.x1 = state.activeShape.x2;
+                state.activeShape.x2 = tmp;
+                renderActiveShapeOverlay();
+                showToast('กลับด้านรูปทรงซ้าย-ขวาแล้ว!');
+                return;
+            }
+            saveHistorySnapshot();
+            [drawCanvas, colorCanvas].forEach(c => {
+                const temp = document.createElement('canvas');
+                temp.width = INTERNAL_WIDTH;
+                temp.height = INTERNAL_HEIGHT;
+                temp.getContext('2d').drawImage(c, 0, 0);
+                const ctx = c.getContext('2d');
+                ctx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+                ctx.save();
+                ctx.translate(INTERNAL_WIDTH, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(temp, 0, 0);
+                ctx.restore();
+            });
+            showToast('กลับด้านภาพที่วาดซ้าย-ขวาแล้ว!');
+        }
+
+        // เครื่องมือหลอดดูดสี (Color Picker / Eyedropper)
+        function pickColorAtPoint(x, y) {
+            const pxX = Math.max(0, Math.min(INTERNAL_WIDTH - 1, Math.round(x)));
+            const pxY = Math.max(0, Math.min(INTERNAL_HEIGHT - 1, Math.round(y)));
+            const dPixel = drawCtx.getImageData(pxX, pxY, 1, 1).data;
+            const cPixel = colorCtx.getImageData(pxX, pxY, 1, 1).data;
+
+            let r = 255, g = 255, b = 255;
+            if (dPixel[3] > 50) {
+                r = dPixel[0]; g = dPixel[1]; b = dPixel[2];
+            } else if (cPixel[3] > 50) {
+                r = cPixel[0]; g = cPixel[1]; b = cPixel[2];
+            } else if (largeRefCtx) {
+                const refPixel = largeRefCtx.getImageData(pxX, pxY, 1, 1).data;
+                r = refPixel[0]; g = refPixel[1]; b = refPixel[2];
+            }
+
+            const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+            selectColor(hex);
+            selectTool('fill');
+            showToast(`ดูดสี ${hex} เรียบร้อย และสลับเป็นถังเทสีพร้อมใช้งาน!`);
+        }
+
+        // เครื่องมือพิมพ์ข้อความ Text (A)
+        function openTextToolAt(pt, clientX, clientY) {
+            state.textPosition = pt;
+            const board = document.getElementById('board-container');
+            const overlay = document.getElementById('canvas-text-Overlay');
+            const input = document.getElementById('canvas-text-input');
+            if (!board || !overlay || !input) return;
+
+            const rect = board.getBoundingClientRect();
+            overlay.style.left = `${Math.min(rect.width - 220, Math.max(8, clientX - rect.left))}px`;
+            overlay.style.top = `${Math.min(rect.height - 48, Math.max(8, clientY - rect.top - 16))}px`;
+            overlay.classList.remove('hidden');
+            input.value = '';
+            input.style.color = state.color;
+            setTimeout(() => input.focus(), 20);
+        }
+
+        function commitTextTool() {
+            const overlay = document.getElementById('canvas-text-Overlay');
+            const input = document.getElementById('canvas-text-input');
+            if (!overlay || !input) return;
+            const text = input.value.trim();
+            if (text && state.textPosition) {
+                saveHistorySnapshot();
+                drawCtx.save();
+                drawCtx.font = `bold ${Math.max(16, state.brushSize * 3)}px Mali, Prompt, sans-serif`;
+                drawCtx.fillStyle = state.color;
+                drawCtx.fillText(text, state.textPosition.x, state.textPosition.y);
+                drawCtx.restore();
+                updateTraceProgress();
+            }
+            overlay.classList.add('hidden');
+            state.textPosition = null;
+        }
+
+        function cancelTextTool() {
+            const overlay = document.getElementById('canvas-text-Overlay');
+            if (overlay) overlay.classList.add('hidden');
+            state.textPosition = null;
+        }
+
         function getCanvasPoint(e) {
             const rect = drawCanvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -2791,34 +3395,322 @@
             };
         }
 
-        // วาดรูปทรงเรขาคณิต (เส้นตรง / วงกลม / สี่เหลี่ยม) ลงบน context ที่กำหนด
-        function renderGeometricShape(ctx, toolType, p1, p2) {
+        // วาดรูปทรงเรขาคณิตทั้ง 23 แบบลงบน context ที่กำหนด
+        function renderShapeObject(ctx, shape) {
+            if (!shape) return;
             ctx.save();
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.strokeStyle = state.color;
-            ctx.lineWidth = state.brushSize;
+            ctx.strokeStyle = shape.color;
+            ctx.fillStyle = shape.color;
+            ctx.lineWidth = shape.lineWidth;
+            ctx.setLineDash([]);
             ctx.beginPath();
 
-            if (toolType === 'line') {
-                ctx.moveTo(p1.x, p1.y);
-                ctx.lineTo(p2.x, p2.y);
-            } else if (toolType === 'circle') {
-                const cx = (p1.x + p2.x) / 2;
-                const cy = (p1.y + p2.y) / 2;
-                const rx = Math.abs(p2.x - p1.x) / 2;
-                const ry = Math.abs(p2.y - p1.y) / 2;
-                ctx.ellipse(cx, cy, Math.max(1, rx), Math.max(1, ry), 0, 0, Math.PI * 2);
-            } else if (toolType === 'rect') {
-                const x = Math.min(p1.x, p2.x);
-                const y = Math.min(p1.y, p2.y);
-                const w = Math.abs(p2.x - p1.x);
-                const h = Math.abs(p2.y - p1.y);
-                ctx.strokeRect(x, y, w, h);
+            const x = Math.min(shape.x1, shape.x2);
+            const y = Math.min(shape.y1, shape.y2);
+            const w = Math.max(2, Math.abs(shape.x2 - shape.x1));
+            const h = Math.max(2, Math.abs(shape.y2 - shape.y1));
+            const cx = x + w / 2;
+            const cy = y + h / 2;
+
+            // ฟังก์ชันช่วยแปลงพิกัดสัดส่วน (0..1) เป็นพิกัดจริงในกรอบ Bounding Box
+            const px = (nx) => x + nx * w;
+            const py = (ny) => y + ny * h;
+            const tracePoly = (pts) => {
+                pts.forEach(([nx, ny], idx) => {
+                    if (idx === 0) ctx.moveTo(px(nx), py(ny));
+                    else ctx.lineTo(px(nx), py(ny));
+                });
+                ctx.closePath();
+            };
+
+            if (shape.type === 'line') {
+                ctx.moveTo(shape.x1, shape.y1);
+                ctx.lineTo(shape.x2, shape.y2);
+            } else if (shape.type === 'curve') {
+                const c1x = shape.cx1 !== undefined ? shape.cx1 : (shape.x1 * 0.67 + shape.x2 * 0.33);
+                const c1y = shape.cy1 !== undefined ? shape.cy1 : (shape.y1 * 0.67 + shape.y2 * 0.33 - 35);
+                const c2x = shape.cx2 !== undefined ? shape.cx2 : (shape.x1 * 0.33 + shape.x2 * 0.67);
+                const c2y = shape.cy2 !== undefined ? shape.cy2 : (shape.y1 * 0.33 + shape.y2 * 0.67 + 35);
+                ctx.moveTo(shape.x1, shape.y1);
+                ctx.bezierCurveTo(c1x, c1y, c2x, c2y, shape.x2, shape.y2);
+            } else if (shape.type === 'circle') {
+                ctx.ellipse(cx, cy, Math.max(1, w / 2), Math.max(1, h / 2), 0, 0, Math.PI * 2);
+            } else if (shape.type === 'rect') {
+                ctx.rect(x, y, w, h);
+            } else if (shape.type === 'roundrect') {
+                const r = Math.min(24, w / 4, h / 4);
+                ctx.roundRect(x, y, w, h, r);
+            } else if (shape.type === 'polygon') {
+                tracePoly([[0.18, 0], [0.65, 0], [0.52, 0.55], [1, 0.55], [1, 1], [0, 1]]);
+            } else if (shape.type === 'triangle') {
+                tracePoly([[0.5, 0], [1, 1], [0, 1]]);
+            } else if (shape.type === 'right_triangle') {
+                tracePoly([[0, 0], [1, 1], [0, 1]]);
+            } else if (shape.type === 'diamond') {
+                tracePoly([[0.5, 0], [1, 0.5], [0.5, 1], [0, 0.5]]);
+            } else if (shape.type === 'pentagon') {
+                tracePoly([[0.5, 0], [1, 0.38], [0.81, 1], [0.19, 1], [0, 0.38]]);
+            } else if (shape.type === 'hexagon') {
+                tracePoly([[0.5, 0], [1, 0.25], [1, 0.75], [0.5, 1], [0, 0.75], [0, 0.25]]);
+            } else if (shape.type === 'arrow_right') {
+                tracePoly([[0, 0.28], [0.58, 0.28], [0.58, 0], [1, 0.5], [0.58, 1], [0.58, 0.72], [0, 0.72]]);
+            } else if (shape.type === 'arrow_left') {
+                tracePoly([[1, 0.28], [0.42, 0.28], [0.42, 0], [0, 0.5], [0.42, 1], [0.42, 0.72], [1, 0.72]]);
+            } else if (shape.type === 'arrow_up') {
+                tracePoly([[0.28, 1], [0.28, 0.42], [0, 0.42], [0.5, 0], [1, 0.42], [0.72, 0.42], [0.72, 1]]);
+            } else if (shape.type === 'arrow_down') {
+                tracePoly([[0.28, 0], [0.28, 0.58], [0, 0.58], [0.5, 1], [1, 0.58], [0.72, 0.58], [0.72, 0]]);
+            } else if (shape.type === 'star_4') {
+                tracePoly([
+                    [0.5, 0], [0.64, 0.36], [1, 0.5], [0.64, 0.64],
+                    [0.5, 1], [0.36, 0.64], [0, 0.5], [0.36, 0.36]
+                ]);
+            } else if (shape.type === 'star_5') {
+                const pts = [];
+                for (let i = 0; i < 10; i++) {
+                    const ang = -Math.PI / 2 + (i * Math.PI) / 5;
+                    const rad = i % 2 === 0 ? 0.5 : 0.21;
+                    pts.push([0.5 + Math.cos(ang) * rad, 0.5 + Math.sin(ang) * rad]);
+                }
+                tracePoly(pts);
+            } else if (shape.type === 'star_6') {
+                const pts = [];
+                for (let i = 0; i < 12; i++) {
+                    const ang = -Math.PI / 2 + (i * Math.PI) / 6;
+                    const rad = i % 2 === 0 ? 0.5 : 0.28;
+                    pts.push([0.5 + Math.cos(ang) * rad, 0.5 + Math.sin(ang) * rad]);
+                }
+                tracePoly(pts);
+            } else if (shape.type === 'callout_roundrect') {
+                const bh = h * 0.76;
+                const r = Math.min(16, w * 0.12, bh * 0.2);
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + bh - r);
+                ctx.quadraticCurveTo(x + w, y + bh, x + w - r, y + bh);
+                ctx.lineTo(x + w * 0.42, y + bh);
+                ctx.lineTo(x + w * 0.2, y + h);
+                ctx.lineTo(x + w * 0.24, y + bh);
+                ctx.lineTo(x + r, y + bh);
+                ctx.quadraticCurveTo(x, y + bh, x, y + bh - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+            } else if (shape.type === 'callout_oval') {
+                const rx = w / 2;
+                const ry = (h * 0.78) / 2;
+                const ocy = y + ry;
+                ctx.ellipse(cx, ocy, Math.max(1, rx), Math.max(1, ry), 0, 0.72 * Math.PI, 2.58 * Math.PI);
+                ctx.lineTo(x + w * 0.18, y + h);
+                ctx.closePath();
+            } else if (shape.type === 'callout_cloud') {
+                ctx.moveTo(px(0.25), py(0.76));
+                ctx.bezierCurveTo(px(0.05), py(0.76), px(0.02), py(0.50), px(0.18), py(0.42));
+                ctx.bezierCurveTo(px(0.16), py(0.18), px(0.42), py(0.06), px(0.58), py(0.20));
+                ctx.bezierCurveTo(px(0.76), py(0.08), px(0.96), py(0.24), px(0.90), py(0.45));
+                ctx.bezierCurveTo(px(1.02), py(0.56), px(0.95), py(0.78), px(0.76), py(0.76));
+                ctx.lineTo(px(0.42), py(0.76));
+                ctx.lineTo(px(0.22), py(0.96));
+                ctx.lineTo(px(0.28), py(0.76));
+                ctx.closePath();
+            } else if (shape.type === 'heart') {
+                ctx.moveTo(px(0.5), py(0.26));
+                ctx.bezierCurveTo(px(0.5), py(0.06), px(0.04), py(0.02), px(0.04), py(0.38));
+                ctx.bezierCurveTo(px(0.04), py(0.66), px(0.5), py(0.86), px(0.5), py(0.98));
+                ctx.bezierCurveTo(px(0.5), py(0.86), px(0.96), py(0.66), px(0.96), py(0.38));
+                ctx.bezierCurveTo(px(0.96), py(0.02), px(0.5), py(0.06), px(0.5), py(0.26));
+                ctx.closePath();
+            } else if (shape.type === 'lightning') {
+                tracePoly([[0.38, 0], [0.78, 0], [0.54, 0.42], [0.84, 0.42], [0.24, 1], [0.44, 0.56], [0.18, 0.56]]);
             }
 
+            if (shape.filled && shape.type !== 'line' && shape.type !== 'curve') {
+                ctx.save();
+                ctx.fillStyle = shape.fillColor || shape.color;
+                ctx.globalAlpha = 0.85;
+                ctx.fill();
+                ctx.restore();
+            }
             ctx.stroke();
             ctx.restore();
+        }
+
+        // คำนวณจุดจับ (Handles) ของรูปทรงที่กำลังเลือกอยู่
+        function getShapeHandles(shape) {
+            if (!shape) return [];
+            if (shape.type === 'line') {
+                return [
+                    { id: 'p1', x: shape.x1, y: shape.y1, cursor: 'nwse-resize' },
+                    { id: 'p2', x: shape.x2, y: shape.y2, cursor: 'nwse-resize' }
+                ];
+            }
+            if (shape.type === 'curve') {
+                return [
+                    { id: 'p1', x: shape.x1, y: shape.y1, cursor: 'nwse-resize' },
+                    { id: 'c1', x: shape.cx1, y: shape.cy1, cursor: 'pointer', isCurveCtrl: true },
+                    { id: 'c2', x: shape.cx2, y: shape.cy2, cursor: 'pointer', isCurveCtrl: true },
+                    { id: 'p2', x: shape.x2, y: shape.y2, cursor: 'nwse-resize' }
+                ];
+            }
+            const left = Math.min(shape.x1, shape.x2);
+            const right = Math.max(shape.x1, shape.x2);
+            const top = Math.min(shape.y1, shape.y2);
+            const bottom = Math.max(shape.y1, shape.y2);
+            const midX = (left + right) / 2;
+            const midY = (top + bottom) / 2;
+
+            return [
+                { id: 'nw', x: left,  y: top,    cursor: 'nwse-resize' },
+                { id: 'n',  x: midX,  y: top,    cursor: 'ns-resize' },
+                { id: 'ne', x: right, y: top,    cursor: 'nesw-resize' },
+                { id: 'e',  x: right, y: midY,   cursor: 'ew-resize' },
+                { id: 'se', x: right, y: bottom, cursor: 'nwse-resize' },
+                { id: 's',  x: midX,  y: bottom, cursor: 'ns-resize' },
+                { id: 'sw', x: left,  y: bottom, cursor: 'nesw-resize' },
+                { id: 'w',  x: left,  y: midY,   cursor: 'ew-resize' }
+            ];
+        }
+
+        // วาดรูปทรงพร้อมกรอบเส้นประและจุดดึงย่อ/ขยาย (Handles) บน fxCanvas เหมือน MS Paint
+        function renderActiveShapeOverlay() {
+            fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            const bar = document.getElementById('shape-transform-bar');
+
+            if (!state.activeShape) {
+                if (bar) {
+                    bar.classList.add('hidden');
+                    bar.classList.remove('flex');
+                }
+                return;
+            }
+
+            if (bar) {
+                bar.classList.remove('hidden');
+                bar.classList.add('flex');
+            }
+
+            const s = state.activeShape;
+            // 1. วาดตัวรูปทรงจริง
+            renderShapeObject(fxCtx, s);
+
+            // 2. วาดกรอบสี่เหลี่ยมเส้นประสีฟ้าล้อมรอบ (Selection Bounding Box)
+            const xs = [s.x1, s.x2];
+            const ys = [s.y1, s.y2];
+            if (s.type === 'curve' && s.cx1 !== undefined) {
+                xs.push(s.cx1, s.cx2);
+                ys.push(s.cy1, s.cy2);
+            }
+            const left = Math.min(...xs);
+            const right = Math.max(...xs);
+            const top = Math.min(...ys);
+            const bottom = Math.max(...ys);
+
+            fxCtx.save();
+            fxCtx.lineWidth = 1.5;
+            fxCtx.strokeStyle = '#0284c7';
+            fxCtx.setLineDash([5, 4]);
+            fxCtx.strokeRect(left - 4, top - 4, (right - left) + 8, (bottom - top) + 8);
+
+            // ถ้าเป็นเส้นโค้ง (Curve) วาดเส้นไกด์เชื่อมจุดดัดโค้งให้เด็กเห็นชัดเจน
+            if (s.type === 'curve' && s.cx1 !== undefined) {
+                fxCtx.strokeStyle = 'rgba(249, 115, 22, 0.55)';
+                fxCtx.beginPath();
+                fxCtx.moveTo(s.x1, s.y1); fxCtx.lineTo(s.cx1, s.cy1);
+                fxCtx.moveTo(s.x2, s.y2); fxCtx.lineTo(s.cx2, s.cy2);
+                fxCtx.stroke();
+            }
+
+            // 3. วาดจุดจับสี่เหลี่ยมสีขาวขอบน้ำเงินสำหรับดึงย่อ/ขยาย (และจุดกลมสีส้มสำหรับดัดเส้นโค้ง)
+            fxCtx.setLineDash([]);
+            const handles = getShapeHandles(s);
+            const hSize = 9;
+            handles.forEach(h => {
+                if (h.isCurveCtrl) {
+                    fxCtx.fillStyle = '#fb923c';
+                    fxCtx.strokeStyle = '#9a3412';
+                    fxCtx.lineWidth = 2;
+                    fxCtx.beginPath();
+                    fxCtx.arc(h.x, h.y, 5.5, 0, Math.PI * 2);
+                    fxCtx.fill();
+                    fxCtx.stroke();
+                } else {
+                    fxCtx.fillStyle = '#ffffff';
+                    fxCtx.strokeStyle = '#1d4ed8';
+                    fxCtx.lineWidth = 2;
+                    fxCtx.beginPath();
+                    fxCtx.rect(h.x - hSize / 2, h.y - hSize / 2, hSize, hSize);
+                    fxCtx.fill();
+                    fxCtx.stroke();
+                }
+            });
+            fxCtx.restore();
+        }
+
+        // ตรวจสอบว่าเมาส์ชี้โดนจุดย่อ/ขยาย (Handle) หรือภายในกรอบรูปทรงเพื่อลากย้าย
+        function hitTestActiveShape(pt) {
+            if (!state.activeShape) return null;
+            const s = state.activeShape;
+            const hitRadius = 13;
+
+            const handles = getShapeHandles(s);
+            for (const h of handles) {
+                if (Math.hypot(pt.x - h.x, pt.y - h.y) <= hitRadius) {
+                    return h;
+                }
+            }
+
+            const xs = [s.x1, s.x2];
+            const ys = [s.y1, s.y2];
+            if (s.type === 'curve' && s.cx1 !== undefined) {
+                xs.push(s.cx1, s.cx2);
+                ys.push(s.cy1, s.cy2);
+            }
+            const left = Math.min(...xs) - 8;
+            const right = Math.max(...xs) + 8;
+            const top = Math.min(...ys) - 8;
+            const bottom = Math.max(...ys) + 8;
+
+            if (pt.x >= left && pt.x <= right && pt.y >= top && pt.y <= bottom) {
+                return { id: 'move', cursor: 'move' };
+            }
+            return null;
+        }
+
+        // ยืนยันการวางรูปทรงลงบนกระดานหลัก (Stamp ลง drawCanvas และหากเปิด Fill จะระบายลง colorCanvas ด้วย)
+        function commitActiveShape() {
+            if (!state.activeShape) return;
+            saveHistorySnapshot();
+            if (state.activeShape.filled && state.activeShape.type !== 'line' && state.activeShape.type !== 'curve') {
+                renderShapeObject(colorCtx, state.activeShape);
+            }
+            renderShapeObject(drawCtx, { ...state.activeShape, filled: false });
+            state.activeShape = null;
+            state.shapeAction = null;
+            fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            const bar = document.getElementById('shape-transform-bar');
+            if (bar) {
+                bar.classList.add('hidden');
+                bar.classList.remove('flex');
+            }
+            drawCanvas.style.cursor = 'crosshair';
+            updateTraceProgress();
+        }
+
+        // ยกเลิกรูปทรงที่กำลังปรับขนาดอยู่โดยไม่วางลงกระดาน
+        function cancelActiveShape() {
+            if (!state.activeShape) return;
+            state.activeShape = null;
+            state.shapeAction = null;
+            fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+            const bar = document.getElementById('shape-transform-bar');
+            if (bar) {
+                bar.classList.add('hidden');
+                bar.classList.remove('flex');
+            }
+            drawCanvas.style.cursor = 'crosshair';
         }
 
         function startDrawing(e) {
@@ -2846,6 +3738,68 @@
             }
 
             const pt = getCanvasPoint(e);
+
+            // เครื่องมือแว่นขยาย (Magnifier): คลิกเพื่อซูมเข้าตรงจุดที่คลิก
+            if (state.tool === 'magnifier') {
+                if (state.zoom >= 3.5) {
+                    resetZoom();
+                } else {
+                    changeZoom(0.5, clientX, clientY);
+                }
+                return;
+            }
+
+            // เครื่องมือหลอดดูดสี (Color Picker)
+            if (state.tool === 'picker') {
+                pickColorAtPoint(pt.x, pt.y);
+                return;
+            }
+
+            // เครื่องมือพิมพ์ข้อความ (Text A)
+            if (state.tool === 'text') {
+                openTextToolAt(pt, clientX, clientY);
+                return;
+            }
+
+            // กรณีที่มีรูปทรงค้างอยู่ในกรอบปรับขนาด (MS Paint Transform Mode)
+            if (state.activeShape) {
+                const hit = hitTestActiveShape(pt);
+                if (hit) {
+                    state.isDrawing = true;
+                    state.shapeAction = hit.id;
+                    state.shapeDragStart = pt;
+                    state.shapeInitialSnapshot = { ...state.activeShape };
+                    return;
+                } else {
+                    // คลิกนอกกรอบ = วางรูปทรงเดิมลงกระดานทันที แล้วเริ่มวาดชิ้นต่อไป
+                    commitActiveShape();
+                }
+            }
+
+            // ถ้าเป็นโหมดสร้างรูปทรงเรขาคณิตใหม่ หรือเครื่องมือ Select
+            if (isShapeTool(state.tool) || state.tool === 'select') {
+                state.isDrawing = true;
+                state.shapeAction = 'creating';
+                const shapeType = state.tool === 'select' ? 'rect' : state.tool;
+                state.activeShape = {
+                    type: shapeType,
+                    x1: pt.x,
+                    y1: pt.y,
+                    x2: pt.x,
+                    y2: pt.y,
+                    cx1: pt.x,
+                    cy1: pt.y,
+                    cx2: pt.x,
+                    cy2: pt.y,
+                    color: state.color,
+                    fillColor: state.color2 !== '#ffffff' ? state.color2 : state.color,
+                    lineWidth: state.brushSize,
+                    filled: state.shapeFill
+                };
+                renderActiveShapeOverlay();
+                return;
+            }
+
             saveHistorySnapshot();
 
             if (state.tool === 'fill') {
@@ -2856,16 +3810,18 @@
 
             state.isDrawing = true;
             state.lastPoint = pt;
-
-            if (state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') {
-                state.shapeStartPoint = pt;
-                return;
-            }
-
             drawStrokeSegment(pt, pt);
         }
 
         function moveDrawing(e) {
+            if (!e.touches) {
+                const hoverPt = getCanvasPoint(e);
+                const posEl = document.getElementById('status-cursor-pos');
+                if (posEl && hoverPt.x >= 0 && hoverPt.x <= INTERNAL_WIDTH && hoverPt.y >= 0 && hoverPt.y <= INTERNAL_HEIGHT) {
+                    posEl.textContent = `${Math.round(hoverPt.x)}, ${Math.round(hoverPt.y)}px`;
+                }
+            }
+
             if (state.isPanning) {
                 e.preventDefault();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -2876,15 +3832,69 @@
                 return;
             }
 
+            // เปลี่ยนรูปเมาส์เมื่อชี้ที่จุดย่อ/ขยายหรือภายในกรอบรูปทรง (แม้ไม่ได้กดเมาส์ค้าง)
+            if (!state.isDrawing && state.activeShape && !e.touches) {
+                const hoverPt = getCanvasPoint(e);
+                const hit = hitTestActiveShape(hoverPt);
+                drawCanvas.style.cursor = hit ? hit.cursor : 'crosshair';
+                return;
+            }
+
             if (!state.isDrawing) return;
             e.preventDefault();
             const pt = getCanvasPoint(e);
 
-            // ถ้าเป็นเครื่องมือรูปทรงเรขาคณิต ให้แสดงเส้นพรีวิวบน fxCanvas ก่อนปล่อยเมาส์
-            if (state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') {
-                fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
-                renderGeometricShape(fxCtx, state.tool, state.shapeStartPoint, pt);
-                state.lastPoint = pt;
+            // กรณีที่กำลังสร้าง ลากย้าย หรือดึงย่อ/ขยายรูปทรงเรขาคณิต
+            if (state.activeShape && state.shapeAction) {
+                const s = state.activeShape;
+                const init = state.shapeInitialSnapshot;
+
+                if (state.shapeAction === 'creating') {
+                    s.x2 = pt.x;
+                    s.y2 = pt.y;
+                    if (s.type === 'curve') {
+                        // กำหนดจุดดัดโค้งเริ่มต้นให้ดึงดัดได้ง่ายทันทีหลังปล่อยเมาส์
+                        const dx = s.x2 - s.x1;
+                        const dy = s.y2 - s.y1;
+                        s.cx1 = s.x1 + dx * 0.33;
+                        s.cy1 = s.y1 + dy * 0.33 - 28;
+                        s.cx2 = s.x1 + dx * 0.67;
+                        s.cy2 = s.y1 + dy * 0.67 + 28;
+                    }
+                } else if (state.shapeAction === 'move') {
+                    const dx = pt.x - state.shapeDragStart.x;
+                    const dy = pt.y - state.shapeDragStart.y;
+                    s.x1 = init.x1 + dx;
+                    s.y1 = init.y1 + dy;
+                    s.x2 = init.x2 + dx;
+                    s.y2 = init.y2 + dy;
+                    if (s.type === 'curve') {
+                        s.cx1 = init.cx1 + dx;
+                        s.cy1 = init.cy1 + dy;
+                        s.cx2 = init.cx2 + dx;
+                        s.cy2 = init.cy2 + dy;
+                    }
+                } else if (state.shapeAction === 'p1') {
+                    s.x1 = pt.x;
+                    s.y1 = pt.y;
+                } else if (state.shapeAction === 'p2') {
+                    s.x2 = pt.x;
+                    s.y2 = pt.y;
+                } else if (state.shapeAction === 'c1') {
+                    s.cx1 = pt.x;
+                    s.cy1 = pt.y;
+                } else if (state.shapeAction === 'c2') {
+                    s.cx2 = pt.x;
+                    s.cy2 = pt.y;
+                } else {
+                    // ดึงจุดจับทั้ง 8 ทิศทาง (nw, n, ne, e, se, s, sw, w)
+                    if (state.shapeAction.includes('w')) s.x1 = pt.x;
+                    if (state.shapeAction.includes('e')) s.x2 = pt.x;
+                    if (state.shapeAction.includes('n')) s.y1 = pt.y;
+                    if (state.shapeAction.includes('s')) s.y2 = pt.y;
+                }
+
+                renderActiveShapeOverlay();
                 return;
             }
 
@@ -2900,10 +3910,27 @@
             }
             if (!state.isDrawing) return;
 
-            if ((state.tool === 'line' || state.tool === 'circle' || state.tool === 'rect') && state.shapeStartPoint && state.lastPoint) {
-                fxCtx.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
-                renderGeometricShape(drawCtx, state.tool, state.shapeStartPoint, state.lastPoint);
-                state.shapeStartPoint = null;
+            if (state.activeShape && state.shapeAction) {
+                const s = state.activeShape;
+                const dist = Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
+                if (state.shapeAction === 'creating' && dist < 5) {
+                    // ถ้าคลิกเฉยๆ โดยไม่ได้ลาก ให้ยกเลิกกรอบเล็กจิ๋ว
+                    cancelActiveShape();
+                } else {
+                    // จัดระเบียบพิกัดซ้าย-ขวา/บน-ล่าง ของรูปทรง 2 มิติให้พร้อมดึงจุดย่อ/ขยายทั้ง 8 ทิศ
+                    if (s.type !== 'line' && s.type !== 'curve') {
+                        const minX = Math.min(s.x1, s.x2);
+                        const maxX = Math.max(s.x1, s.x2);
+                        const minY = Math.min(s.y1, s.y2);
+                        const maxY = Math.max(s.y1, s.y2);
+                        s.x1 = minX; s.x2 = maxX;
+                        s.y1 = minY; s.y2 = maxY;
+                    }
+                    renderActiveShapeOverlay();
+                }
+                state.isDrawing = false;
+                state.shapeAction = null;
+                return;
             }
 
             state.isDrawing = false;
@@ -2928,8 +3955,8 @@
                 return;
             }
 
-            // ดินสอ (pen) วาดบนชั้นเส้นขอบ (drawCtx) เพื่อกั้นสี ส่วนพู่กัน/สีเทียนระบายอยู่ชั้นสี (colorCtx)
-            const targetCtx = (state.tool === 'pen') ? drawCtx : colorCtx;
+            // ดินสอ (pen) และปากกาเมจิก (marker) วาดบนชั้นเส้นขอบ (drawCtx) เพื่อกั้นสี ส่วนพู่กัน/สีเทียน/สเปรย์ระบายอยู่ชั้นสี (colorCtx)
+            const targetCtx = (state.tool === 'pen' || state.tool === 'marker') ? drawCtx : colorCtx;
 
             targetCtx.save();
             targetCtx.lineCap = 'round';
@@ -2937,12 +3964,29 @@
             targetCtx.strokeStyle = state.color;
             targetCtx.lineWidth = state.brushSize;
 
-            if (state.tool === 'pen' || state.tool === 'brush') {
+            if (state.tool === 'pen' || state.tool === 'brush' || state.tool === 'marker') {
                 targetCtx.globalAlpha = 1.0;
                 targetCtx.beginPath();
                 targetCtx.moveTo(p1.x, p1.y);
                 targetCtx.lineTo(p2.x, p2.y);
                 targetCtx.stroke();
+            } else if (state.tool === 'airbrush') {
+                // สเปรย์พ่นสี (Airbrush) เหมือนใน Windows Paint
+                const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+                const steps = Math.max(1, Math.ceil(dist / 3));
+                targetCtx.fillStyle = state.color;
+                const radius = state.brushSize * 1.4;
+                for (let i = 0; i <= steps; i++) {
+                    const t = i / steps;
+                    const cx = p1.x + (p2.x - p1.x) * t;
+                    const cy = p1.y + (p2.y - p1.y) * t;
+                    for (let j = 0; j < 10; j++) {
+                        const ang = Math.random() * Math.PI * 2;
+                        const r = Math.random() * radius;
+                        targetCtx.globalAlpha = 0.35;
+                        targetCtx.fillRect(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r, 1.8, 1.8);
+                    }
+                }
             } else if (state.tool === 'crayon') {
                 const dist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
                 const steps = Math.max(1, Math.ceil(dist / 2));
@@ -3078,6 +4122,7 @@
          * 6. ระบบเกมฝึกซ้อมแข่งขันศิลปหัตถกรรม & กรรมการให้คะแนน 100 คะแนนเต็ม
          ********************************************************************/
         function switchGameMode(mode) {
+            commitActiveShape();
             state.gameMode = mode;
             const singleBtn = document.getElementById('mode-single-btn');
             const compBtn = document.getElementById('mode-comp-btn');
@@ -3210,6 +4255,7 @@
 
         // ระบบกรรมการตรวจให้คะแนน 100 คะแนนเต็ม ตามเกณฑ์การแข่งขันศิลปหัตถกรรมนักเรียน
         function evaluateCompetitionScore() {
+            commitActiveShape();
             const tracePct = updateTraceProgress();
             const colorPixels = colorCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
             const drawPixels = drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT).data;
@@ -3279,6 +4325,7 @@
         }
 
         function selectCharacter(charKey) {
+            commitActiveShape();
             state.currentCharacter = charKey;
             document.querySelectorAll('.char-card').forEach(btn => btn.classList.remove('active'));
             const btn = document.getElementById(`char-${charKey}`);
@@ -3290,6 +4337,7 @@
         }
 
         function selectPose(poseKey) {
+            commitActiveShape();
             state.currentPose = poseKey;
             state.currentStep = 'all';
 
@@ -3318,20 +4366,35 @@
         }
 
         function selectTool(toolName) {
+            if (state.activeShape && state.tool !== toolName) {
+                commitActiveShape();
+            }
+            if (state.textPosition && toolName !== 'text') {
+                commitTextTool();
+            }
             state.tool = toolName;
             document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
             const btn = document.getElementById(`tool-${toolName}`);
             if (btn) btn.classList.add('active');
 
+            if (['brush', 'marker', 'crayon', 'airbrush'].includes(toolName)) {
+                const brushMain = document.getElementById('tool-brush-main');
+                if (brushMain) brushMain.classList.add('active');
+            }
+
             if (toolName === 'pan') {
                 drawCanvas.style.cursor = 'grab';
+            } else if (toolName === 'magnifier') {
+                drawCanvas.style.cursor = 'zoom-in';
+            } else if (toolName === 'text') {
+                drawCanvas.style.cursor = 'text';
             } else {
                 drawCanvas.style.cursor = 'crosshair';
             }
 
-            if (toolName === 'pen') updateBrushSize(6);
-            else if (toolName === 'brush') updateBrushSize(14);
-            else if (toolName === 'crayon') updateBrushSize(14);
+            if (toolName === 'pen' || isShapeTool(toolName)) updateBrushSize(5);
+            else if (toolName === 'marker') updateBrushSize(8);
+            else if (toolName === 'brush' || toolName === 'crayon' || toolName === 'airbrush') updateBrushSize(14);
             else if (toolName === 'eraser') updateBrushSize(20);
         }
 
@@ -3340,23 +4403,44 @@
             const input = document.getElementById('brush-size');
             if (input) input.value = state.brushSize;
             const label = document.getElementById('brush-size-label');
-            if (label) label.textContent = `${state.brushSize} px`;
+            if (label) label.textContent = `${state.brushSize}px`;
+
+            if (state.activeShape) {
+                state.activeShape.lineWidth = state.brushSize;
+                renderActiveShapeOverlay();
+            }
+        }
+
+        function setActiveColorSlot(slotNum) {
+            state.activeColorSlot = slotNum;
+            const slot1 = document.getElementById('color-slot-1');
+            const slot2 = document.getElementById('color-slot-2');
+            if (slot1) slot1.classList.toggle('active', slotNum === 1);
+            if (slot2) slot2.classList.toggle('active', slotNum === 2);
         }
 
         function selectColor(hex) {
+            if (state.activeColorSlot === 2) {
+                state.color2 = hex;
+                const secBox = document.getElementById('secondary-color-box');
+                if (secBox) secBox.style.backgroundColor = hex;
+                if (state.activeShape) {
+                    state.activeShape.fillColor = hex;
+                    renderActiveShapeOverlay();
+                }
+                return;
+            }
+
             state.color = hex;
             const picker = document.getElementById('custom-color-picker');
             if (picker) picker.value = hex;
             const activeBox = document.getElementById('active-color-box');
             if (activeBox) activeBox.style.backgroundColor = hex;
 
-            document.querySelectorAll('.color-swatch-btn').forEach(btn => {
-                if (btn.dataset.hex.toLowerCase() === hex.toLowerCase()) {
-                    btn.classList.add('ring-2', 'ring-blue-600', 'scale-110');
-                } else {
-                    btn.classList.remove('ring-2', 'ring-blue-600', 'scale-110');
-                }
-            });
+            if (state.activeShape) {
+                state.activeShape.color = hex;
+                renderActiveShapeOverlay();
+            }
 
             if (state.tool === 'eraser') selectTool('pen');
         }
@@ -3403,6 +4487,10 @@
         }
 
         function undoStroke() {
+            if (state.activeShape) {
+                cancelActiveShape();
+                return;
+            }
             if (state.history.length === 0) return;
             state.redoStack.push({
                 draw: drawCtx.getImageData(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT),
@@ -3436,6 +4524,7 @@
         }
 
         function openClearModal() {
+            commitActiveShape();
             openModal(
                 'ล้างกระดานเริ่มวาดใหม่?',
                 'ต้องการลบเส้นและสีที่วาดไว้ทั้งหมด เพื่อเริ่มฝึกวาดใหม่ใช่ไหมครับ? (เส้นประต้นแบบยังคงอยู่)',
@@ -3458,6 +4547,7 @@
         }
 
         function downloadArtwork() {
+            commitActiveShape();
             const exportCanvas = document.createElement('canvas');
             exportCanvas.width = INTERNAL_WIDTH;
             exportCanvas.height = INTERNAL_HEIGHT;
@@ -3550,8 +4640,15 @@
                 btn.dataset.hex = item.hex;
                 btn.title = item.name;
                 btn.style.backgroundColor = item.hex;
-                btn.className = 'color-swatch-btn w-5 h-5 sm:w-6 sm:h-6 rounded border border-slate-400 shadow-2xs transition transform hover:scale-110';
+                btn.className = 'color-swatch-btn mspaint-swatch transition';
                 btn.onclick = () => selectColor(item.hex);
+                btn.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    const prev = state.activeColorSlot;
+                    setActiveColorSlot(2);
+                    selectColor(item.hex);
+                    setActiveColorSlot(prev);
+                };
                 container.appendChild(btn);
             });
             selectColor(state.color);
@@ -3565,6 +4662,22 @@
             fitBoardToWorkspace();
             renderAllTemplates();
             updateUndoRedoButtons();
+
+            // ปิดเมนูดรอปดาวน์ Brushes / Size เมื่อคลิกพื้นที่อื่น
+            window.addEventListener('click', () => closePopups());
+
+            const textInput = document.getElementById('canvas-text-input');
+            if (textInput) {
+                textInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        commitTextTool();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        cancelTextTool();
+                    }
+                });
+            }
 
             drawCanvas.addEventListener('mousedown', startDrawing);
             window.addEventListener('mousemove', moveDrawing);
@@ -3622,7 +4735,13 @@
             }
 
             window.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                if (e.key === 'Enter' && state.activeShape) {
+                    e.preventDefault();
+                    commitActiveShape();
+                } else if (e.key === 'Escape' && state.activeShape) {
+                    e.preventDefault();
+                    cancelActiveShape();
+                } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
                     e.preventDefault();
                     if (e.shiftKey) redoStroke();
                     else undoStroke();
